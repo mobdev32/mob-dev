@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - Электронный учебник по мобильной разработке{% endblock %}
+
+{% block content %}
+<div class="jumbotron py-4 mb-4 hero-section" style="background-color: var(--primary-color); color: #2c3e50;">
+    <div class="hero-background">
+        <div class="hero-visual">
+            <i class="fas fa-code-branch hero-icon" style="font-size: 20rem; color: rgba(44, 62, 80, 0.3);"></i>
+        </div>
+        <div class="floating-elements">
+            <i class="fas fa-mobile-alt floating-icon floating-icon-1"></i>
+            <i class="fas fa-code floating-icon floating-icon-2"></i>
+            <i class="fas fa-laptop-code floating-icon floating-icon-3"></i>
+            <i class="fas fa-database floating-icon floating-icon-4"></i>
+            <i class="fas fa-cloud floating-icon floating-icon-5"></i>
+            <i class="fas fa-cog floating-icon floating-icon-6"></i>
+        </div>
+    </div>
+    <div class="container">
+        <div class="hero-content text-center">
+            <h1 class="display-4 mb-3 hero-title">
+                Электронный учебник по мобильной разработке
+            </h1>
+            <p class="lead mb-3 mx-auto" style="max-width: 600px;">Изучайте современные технологии создания мобильных приложений с помощью структурированных материалов и практических заданий.</p>
+            <div class="hero-buttons justify-content-center">
+                <a class="btn btn-secondary btn-lg px-5 me-3" href="{% url 'main:materials' %}" role="button">
+                    <i class="fas fa-graduation-cap me-2"></i>Начать обучение
+                </a>
+                <a class="btn btn-outline-secondary btn-lg px-4" href="{% url 'main:tests' %}" role="button">
+                    <i class="fas fa-play me-2"></i>Попробовать тест
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4 px-3">
+
+    <div class="row mb-4 py-3">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-book-open me-2 text-primary"></i>
+                        Обучающие материалы
+                    </h5>
+                    <p class="card-text">Изучайте мобильную разработку с помощью структурированных материалов, включающих теорию и практические примеры.</p>
+                    <a href="{% url 'main:materials' %}" class="btn btn-primary">
+                        <i class="fas fa-arrow-right me-1"></i>Перейти к материалам
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-question-circle me-2 text-primary"></i>
+                        Интерактивные тесты
+                    </h5>
+                    <p class="card-text">Проверяйте свои знания с помощью тестов различной сложности и отслеживайте свой прогресс обучения.</p>
+                    <a href="{% url 'main:tests' %}" class="btn btn-primary">
+                        <i class="fas fa-arrow-right me-1"></i>Пройти тесты
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-users me-2 text-primary"></i>
+                        Сообщество
+                    </h5>
+                    <p class="card-text">Общайтесь с преподавателями и студентами, задавайте вопросы и делитесь опытом.</p>
+                    <a href="{% url 'main:contact' %}" class="btn btn-primary">
+                        <i class="fas fa-arrow-right me-1"></i>Связаться с нами
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4 py-3">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Последние материалы</h2>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-mobile-alt me-2 text-primary"></i>
+                                Введение в мобильную разработку
+                            </h5>
+                            <p class="card-text">Основы мобильной разработки, архитектура приложений и современные технологии.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>15 минут чтения
+                                </small>
+                                <span class="badge bg-primary">Начальный уровень</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-code me-2 text-primary"></i>
+                                React Native для начинающих
+                            </h5>
+                            <p class="card-text">Изучение основ React Native для создания кроссплатформенных мобильных приложений.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>30 минут чтения
+                                </small>
+                                <span class="badge bg-secondary">Средний уровень</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="{% url 'main:materials' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-arrow-right me-2"></i>Посмотреть все материалы
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
