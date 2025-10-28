@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - Электронный учебник по мобильной разработке{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-center mb-4">Обучающие материалы</h1>
+            <p class="text-center text-muted mb-4">Изучайте мобильную разработку с помощью структурированных материалов</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Фильтры</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Категория</label>
+                        <select class="form-select" id="categoryFilter">
+                            <option value="">Все категории</option>
+                            <option value="basics">Основы</option>
+                            <option value="android">Android</option>
+                            <option value="ios">iOS</option>
+                            <option value="react-native">React Native</option>
+                            <option value="flutter">Flutter</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Сложность</label>
+                        <select class="form-select" id="difficultyFilter">
+                            <option value="">Любая</option>
+                            <option value="beginner">Начальный</option>
+                            <option value="intermediate">Средний</option>
+                            <option value="advanced">Продвинутый</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="applyFilters()">Применить</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            {% if materials %}
+            <div class="row" id="materialsList">
+                {% for material in materials %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-book-open me-2 text-primary"></i>
+                                {{ material.title }}
+                            </h5>
+                            <p class="card-text">{{ material.description }}</p>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-primary">{{ material.category.name }}</span>
+                                {% if material.difficulty == 'beginner' %}
+                                    <span class="badge bg-success">Начальный</span>
+                                {% elif material.difficulty == 'intermediate' %}
+                                    <span class="badge bg-warning">Средний</span>
+                                {% elif material.difficulty == 'advanced' %}
+                                    <span class="badge bg-danger">Продвинутый</span>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>{{ material.reading_time }} минут
+                                </small>
+                                <a href="#" class="btn btn-primary">Изучать</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center">
+                <p class="text-muted">Материалы пока не добавлены</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function applyFilters() {
+    const category = document.getElementById('categoryFilter').value;
+    const difficulty = document.getElementById('difficultyFilter').value;
+    
+    const materials = document.querySelectorAll('#materialsList .card');
+    
+    materials.forEach(material => {
+        let show = true;
+        
+        if (category && !material.querySelector('.badge').textContent.toLowerCase().includes(category.toLowerCase())) {
+            show = false;
+        }
+        
+        if (difficulty) {
+            const difficultyBadge = material.querySelectorAll('.badge')[1];
+            const difficultyText = difficultyBadge.textContent.toLowerCase();
+            if (difficulty === 'beginner' && !difficultyText.includes('начальный')) show = false;
+            if (difficulty === 'intermediate' && !difficultyText.includes('средний')) show = false;
+            if (difficulty === 'advanced' && !difficultyText.includes('продвинутый')) show = false;
+        }
+        
+        material.parentElement.style.display = show ? 'block' : 'none';
+    });
+}
+</script>
+{% endblock %}

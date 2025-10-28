@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - Электронный учебник по мобильной разработке{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-center mb-4">Контакты</h1>
+            <p class="text-center text-muted mb-4">Свяжитесь с нами для получения помощи или оставьте отзыв</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">
+                        <i class="fas fa-envelope me-2 text-primary"></i>
+                        Форма обратной связи
+                    </h5>
+                    
+                    <form method="post" action="{% url 'main:contact' %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Имя *</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Тема *</label>
+                            <select class="form-select" id="subject" name="subject" required>
+                                <option value="">Выберите тему</option>
+                                <option value="technical">Техническая поддержка</option>
+                                <option value="content">Вопрос по материалам</option>
+                                <option value="test">Проблема с тестами</option>
+                                <option value="suggestion">Предложение по улучшению</option>
+                                <option value="other">Другое</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Приоритет</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="medium">Средний</option>
+                                <option value="low">Низкий</option>
+                                <option value="high">Высокий</option>
+                                <option value="urgent">Срочный</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Сообщение *</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" required placeholder="Опишите ваш вопрос или предложение..."></textarea>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Отправить сообщение
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-university me-2 text-primary"></i>
+                        Московский университет имени С.Ю. Витте
+                    </h5>
+                    <p class="card-text">Частное образовательное учреждение высшего образования</p>
+                    <hr>
+                    <div class="mb-3">
+                        <h6><i class="fas fa-map-marker-alt me-2 text-primary"></i>Адрес</h6>
+                        <p class="mb-0">Москва, ул. Кожуховская, 12</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6><i class="fas fa-phone me-2 text-primary"></i>Телефон</h6>
+                        <p class="mb-0">+7 (495) 123-45-67</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6><i class="fas fa-envelope me-2 text-primary"></i>Email</h6>
+                        <p class="mb-0">info@witte-university.ru</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6><i class="fas fa-globe me-2 text-primary"></i>Сайт</h6>
+                        <p class="mb-0">www.witte-university.ru</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-clock me-2 text-primary"></i>
+                        Режим работы
+                    </h5>
+                    <div class="mb-2">
+                        <strong>Понедельник - Пятница:</strong><br>
+                        9:00 - 18:00
+                    </div>
+                    <div class="mb-2">
+                        <strong>Суббота:</strong><br>
+                        10:00 - 15:00
+                    </div>
+                    <div class="mb-0">
+                        <strong>Воскресенье:</strong><br>
+                        Выходной
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center mb-4">
+                        <i class="fas fa-users me-2 text-primary"></i>
+                        Наша команда
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-user-tie fa-3x text-primary"></i>
+                                </div>
+                                <h6>Иванов И.И.</h6>
+                                <p class="text-muted small">Руководитель проекта</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-chalkboard-teacher fa-3x text-primary"></i>
+                                </div>
+                                <h6>Петрова А.С.</h6>
+                                <p class="text-muted small">Преподаватель Android</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-chalkboard-teacher fa-3x text-primary"></i>
+                                </div>
+                                <h6>Сидоров М.В.</h6>
+                                <p class="text-muted small">Преподаватель iOS</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-headset fa-3x text-primary"></i>
+                                </div>
+                                <h6>Козлова Е.А.</h6>
+                                <p class="text-muted small">Техническая поддержка</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
