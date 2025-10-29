@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}{{ material.title }} - Электронный учебник по мобильной разработке{% endblock %}
 
@@ -62,7 +63,7 @@
                     <div class="material-content">
                         <h3>Содержание материала</h3>
                         <div class="content-text">
-                            {{ material.content|linebreaks }}
+                            {{ material.content|markdown }}
                         </div>
                     </div>
                     
@@ -116,63 +117,48 @@
         </div>
         
         <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-info-circle me-2 text-primary"></i>
-                        Информация о материале
-                    </h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2">
-                            <strong>Категория:</strong><br>
-                            <span class="badge bg-primary">{{ material.category.name }}</span>
-                        </li>
-                        <li class="mb-2">
-                            <strong>Сложность:</strong><br>
-                            {% if material.difficulty == 'beginner' %}
-                                <span class="badge bg-success">Начальный</span>
-                            {% elif material.difficulty == 'intermediate' %}
-                                <span class="badge bg-warning">Средний</span>
-                            {% elif material.difficulty == 'advanced' %}
-                                <span class="badge bg-danger">Продвинутый</span>
-                            {% endif %}
-                        </li>
-                        <li class="mb-2">
-                            <strong>Время чтения:</strong><br>
-                            <i class="fas fa-clock me-1"></i>{{ material.reading_time }} минут
-                        </li>
-                        <li class="mb-2">
-                            <strong>Просмотры:</strong><br>
-                            <i class="fas fa-eye me-1"></i>{{ material.views_count }}
-                        </li>
-                    </ul>
+            <div class="material-info-card">
+                <div class="material-info-header">
+                    <div class="material-info-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h5 class="material-info-title">Информация о материале</h5>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-lightbulb me-2 text-primary"></i>
-                        Полезные советы
-                    </h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2">
-                            <i class="fas fa-check-circle text-success me-2"></i>
-                            Читайте материал внимательно
-                        </li>
-                        <li class="mb-2">
-                            <i class="fas fa-check-circle text-success me-2"></i>
-                            Делайте заметки по ходу изучения
-                        </li>
-                        <li class="mb-2">
-                            <i class="fas fa-check-circle text-success me-2"></i>
-                            Практикуйтесь с примерами кода
-                        </li>
-                        <li class="mb-2">
-                            <i class="fas fa-check-circle text-success me-2"></i>
-                            Пройдите тест после изучения
-                        </li>
-                    </ul>
+                <div class="material-info-content">
+                    <div class="material-info-item">
+                        <div class="material-info-label">
+                            <i class="fas fa-folder material-info-label-icon"></i>
+                            <span>Категория</span>
+                        </div>
+                        <span class="material-info-badge material-info-badge-primary">{{ material.category.name }}</span>
+                    </div>
+                    <div class="material-info-item">
+                        <div class="material-info-label">
+                            <i class="fas fa-signal material-info-label-icon"></i>
+                            <span>Сложность</span>
+                        </div>
+                        {% if material.difficulty == 'beginner' %}
+                            <span class="material-info-badge material-info-badge-success">Начальный</span>
+                        {% elif material.difficulty == 'intermediate' %}
+                            <span class="material-info-badge material-info-badge-warning">Средний</span>
+                        {% elif material.difficulty == 'advanced' %}
+                            <span class="material-info-badge material-info-badge-danger">Продвинутый</span>
+                        {% endif %}
+                    </div>
+                    <div class="material-info-item">
+                        <div class="material-info-label">
+                            <i class="fas fa-clock material-info-label-icon"></i>
+                            <span>Время чтения</span>
+                        </div>
+                        <div class="material-info-value">{{ material.reading_time }} мин</div>
+                    </div>
+                    <div class="material-info-item">
+                        <div class="material-info-label">
+                            <i class="fas fa-eye material-info-label-icon"></i>
+                            <span>Просмотры</span>
+                        </div>
+                        <div class="material-info-value">{{ material.views_count }}</div>
+                    </div>
                 </div>
             </div>
         </div>
