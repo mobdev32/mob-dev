@@ -25,10 +25,10 @@
             </h1>
             <p class="lead mb-3 mx-auto" style="max-width: 600px;">Изучайте современные технологии создания мобильных приложений с помощью структурированных материалов и практических заданий.</p>
             <div class="hero-buttons justify-content-center">
-                <a class="btn btn-secondary btn-lg px-5 me-3" href="{% url 'main:materials' %}" role="button">
+                <a class="btn btn-hero-primary btn-lg px-5 me-3" href="{% url 'main:materials' %}" role="button">
                     <i class="fas fa-graduation-cap me-2"></i>Начать обучение
                 </a>
-                <a class="btn btn-outline-secondary btn-lg px-4" href="{% url 'main:tests' %}" role="button">
+                <a class="btn btn-hero-test btn-lg px-4" href="{% url 'main:tests' %}" role="button">
                     <i class="fas fa-play me-2"></i>Попробовать тест
                 </a>
             </div>
@@ -36,91 +36,126 @@
     </div>
 </div>
 
-<div class="container mt-4 px-3">
-
-    <div class="row mb-4 py-3">
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-book-open me-2 text-primary"></i>
-                        Обучающие материалы
-                    </h5>
-                    <p class="card-text">Изучайте мобильную разработку с помощью структурированных материалов, включающих теорию и практические примеры.</p>
-                    <a href="{% url 'main:materials' %}" class="btn btn-primary">
-                        <i class="fas fa-arrow-right me-1"></i>Перейти к материалам
-                    </a>
-                </div>
-            </div>
+<div class="container mt-5 px-3">
+    <div class="features-section">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Возможности платформы</h2>
+            <p class="section-subtitle">Все необходимое для изучения мобильной разработки в одном месте</p>
         </div>
         
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-question-circle me-2 text-primary"></i>
-                        Интерактивные тесты
-                    </h5>
-                    <p class="card-text">Проверяйте свои знания с помощью тестов различной сложности и отслеживайте свой прогресс обучения.</p>
-                    <a href="{% url 'main:tests' %}" class="btn btn-primary">
-                        <i class="fas fa-arrow-right me-1"></i>Пройти тесты
-                    </a>
+        <div class="row g-4 mb-5">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h4 class="feature-title">Обучающие материалы</h4>
+                        <p class="feature-description">Изучайте мобильную разработку с помощью структурированных материалов, включающих теорию и практические примеры.</p>
+                        <a href="{% url 'main:materials' %}" class="feature-link">
+                            <span>Перейти к материалам</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-users me-2 text-primary"></i>
-                        Сообщество
-                    </h5>
-                    <p class="card-text">Общайтесь с преподавателями и студентами, задавайте вопросы и делитесь опытом.</p>
-                    <a href="{% url 'main:contacts' %}" class="btn btn-primary">
-                        <i class="fas fa-arrow-right me-1"></i>Связаться с нами
-                    </a>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h4 class="feature-title">Интерактивные тесты</h4>
+                        <p class="feature-description">Проверяйте свои знания с помощью тестов различной сложности и отслеживайте свой прогресс обучения.</p>
+                        <a href="{% url 'main:tests' %}" class="feature-link">
+                            <span>Пройти тесты</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h4 class="feature-title">Сообщество</h4>
+                        <p class="feature-description">Общайтесь с преподавателями и студентами, задавайте вопросы и делитесь опытом.</p>
+                        <a href="{% url 'main:contacts' %}" class="feature-link">
+                            <span>Связаться с нами</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row mb-4 py-3">
-        <div class="col-12">
-            <h2 class="text-center mb-4">Последние материалы</h2>
-            {% if materials %}
-            <div class="row">
-                {% for material in materials %}
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <i class="fas fa-book-open me-2 text-primary"></i>
-                                {{ material.title }}
-                            </h5>
-                            <p class="card-text">{{ material.description }}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">
-                                    <i class="fas fa-clock me-1"></i>{{ material.reading_time }} минут чтения
-                                </small>
-                                <a href="{% url 'main:material_detail' material.id %}" class="btn btn-primary btn-sm">Изучать</a>
+    <div class="materials-section">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Последние материалы</h2>
+            <p class="section-subtitle">Изучайте новые темы и развивайте свои навыки</p>
+        </div>
+        
+        {% if materials %}
+        <div class="row g-4 mb-5">
+            {% for material in materials %}
+            <div class="col-lg-6">
+                <div class="material-card">
+                    <div class="material-header">
+                        <div class="material-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="material-meta">
+                            <span class="material-category">{{ material.category.name }}</span>
+                            <span class="material-time">
+                                <i class="fas fa-clock"></i>
+                                {{ material.reading_time }} мин
+                            </span>
+                        </div>
+                    </div>
+                    <div class="material-content">
+                        <h4 class="material-title">{{ material.title }}</h4>
+                        <p class="material-description">{{ material.description }}</p>
+                        <div class="material-footer">
+                            <div class="material-stats">
+                                <span class="stat-item">
+                                    <i class="fas fa-eye"></i>
+                                    {{ material.views_count }}
+                                </span>
+                                <span class="stat-item">
+                                    <i class="fas fa-calendar"></i>
+                                    {{ material.created_at|date:"d.m.Y" }}
+                                </span>
                             </div>
+                            <a href="{% url 'main:material_detail' material.id %}" class="material-link">
+                                <span>Изучать</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
-            {% else %}
-            <div class="text-center">
-                <p class="text-muted">Материалы пока не добавлены</p>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state text-center">
+            <div class="empty-icon">
+                <i class="fas fa-book-open"></i>
             </div>
-            {% endif %}
-            
-            <div class="text-center">
-                <a href="{% url 'main:materials' %}" class="btn btn-outline-primary btn-lg">
-                    <i class="fas fa-arrow-right me-2"></i>Посмотреть все материалы
-                </a>
-            </div>
+            <h4 class="empty-title">Материалы пока не добавлены</h4>
+            <p class="empty-description">Скоро здесь появятся обучающие материалы</p>
+        </div>
+        {% endif %}
+        
+        <div class="text-center">
+            <a href="{% url 'main:materials' %}" class="btn-modern">
+                <span>Посмотреть все материалы</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
         </div>
     </div>
 </div>
