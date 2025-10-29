@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Настройки профиля - Электронный учебник по мобильной разработке{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="settings-header">
+                <h1 class="settings-title">
+                    <i class="fas fa-cog"></i>
+                    Настройки профиля
+                </h1>
+                <p class="settings-subtitle">Управляйте своими данными и настройками безопасности</p>
+            </div>
+            
+            <div class="settings-tabs">
+                <button class="tab-button active" data-tab="profile">
+                    <i class="fas fa-user"></i>
+                    Личная информация
+                </button>
+                <button class="tab-button" data-tab="password">
+                    <i class="fas fa-lock"></i>
+                    Безопасность
+                </button>
+            </div>
+            
+            <div class="settings-content">
+                <div class="tab-content active" id="profile-tab">
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-user-edit"></i>
+                                Редактировать профиль
+                            </h3>
+                            <p class="card-subtitle">Обновите свои личные данные</p>
+                        </div>
+                        <form method="post" class="settings-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="update_profile" value="1">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="first_name" class="form-label">
+                                        <i class="fas fa-user"></i>
+                                        Имя
+                                    </label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" 
+                                           value="{{ user.first_name }}" placeholder="Введите имя">
+                                </div>
+                                <div class="form-group">
+                                    <label for="last_name" class="form-label">
+                                        <i class="fas fa-user"></i>
+                                        Фамилия
+                                    </label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" 
+                                           value="{{ user.last_name }}" placeholder="Введите фамилию">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope"></i>
+                                    Email
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ user.email }}" placeholder="Введите email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone" class="form-label">
+                                    <i class="fas fa-phone"></i>
+                                    Телефон
+                                </label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       value="{{ profile.phone }}" placeholder="Введите номер телефона">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bio" class="form-label">
+                                    <i class="fas fa-info-circle"></i>
+                                    О себе
+                                </label>
+                                <textarea class="form-control" id="bio" name="bio" rows="4" 
+                                          placeholder="Расскажите о себе...">{{ profile.bio }}</textarea>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn-save">
+                                    <i class="fas fa-save"></i>
+                                    Сохранить изменения
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="password-tab">
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-key"></i>
+                                Изменить пароль
+                            </h3>
+                            <p class="card-subtitle">Обновите пароль для повышения безопасности</p>
+                        </div>
+                        <form method="post" class="settings-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="change_password" value="1">
+                            
+                            <div class="form-group">
+                                <label for="old_password" class="form-label">
+                                    <i class="fas fa-lock"></i>
+                                    Текущий пароль
+                                </label>
+                                <input type="password" class="form-control" id="old_password" name="old_password" 
+                                       placeholder="Введите текущий пароль" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="new_password1" class="form-label">
+                                    <i class="fas fa-key"></i>
+                                    Новый пароль
+                                </label>
+                                <input type="password" class="form-control" id="new_password1" name="new_password1" 
+                                       placeholder="Введите новый пароль" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="new_password2" class="form-label">
+                                    <i class="fas fa-check-circle"></i>
+                                    Подтвердите пароль
+                                </label>
+                                <input type="password" class="form-control" id="new_password2" name="new_password2" 
+                                       placeholder="Подтвердите новый пароль" required>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn-save">
+                                    <i class="fas fa-save"></i>
+                                    Изменить пароль
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            
+            // Remove active class from all buttons and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked button and corresponding content
+            this.classList.add('active');
+            document.getElementById(targetTab + '-tab').classList.add('active');
+        });
+    });
+});
+</script>
+{% endblock %}

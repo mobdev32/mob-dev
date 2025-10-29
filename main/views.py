@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Material, Test, Feedback, Profile, Category, TestAttempt, UserAnswer, Question, Answer, MaterialProgress
@@ -126,10 +126,29 @@ def profile(request):
     except Profile.DoesNotExist:
         user_profile = Profile.objects.create(user=request.user, role='student')
     
+    # Calculate actual progress
+    total_materials = Material.objects.filter(is_published=True).count()
+    completed_materials = MaterialProgress.objects.filter(
+        user=request.user, 
+        is_completed=True
+    ).count()
+    
+    total_tests = Test.objects.filter(is_published=True).count()
+    passed_tests = TestAttempt.objects.filter(
+        user=request.user, 
+        is_passed=True
+    ).values('test').distinct().count()
+    
     context = {
         'title': 'Профиль',
         'user': request.user,
-        'profile': user_profile
+        'profile': user_profile,
+        'total_materials': total_materials,
+        'completed_materials': completed_materials,
+        'total_tests': total_tests,
+        'passed_tests': passed_tests,
+        'materials_progress': (completed_materials / total_materials * 100) if total_materials > 0 else 0,
+        'tests_progress': (passed_tests / total_tests * 100) if total_tests > 0 else 0,
     }
     return render(request, 'main/profile.html', context)
 
@@ -232,3 +251,46 @@ def test_result(request, attempt_id):
         'attempt': attempt
     }
     return render(request, 'main/test_result.html', context)
+
+@login_required
+def profile_settings(request):
+    if request.method == 'POST':
+        if 'change_password' in request.POST:
+            form = PasswordChangeForm(request.user, request.POST)
+            if form.is_valid():
+                user = form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Пароль успешно изменен!')
+                return redirect('main:profile_settings')
+            else:
+                messages.error(request, 'Ошибка при изменении пароля.')
+        elif 'update_profile' in request.POST:
+            first_name = request.POST.get('first_name', '')
+            last_name = request.POST.get('last_name', '')
+            email = request.POST.get('email', '')
+            phone = request.POST.get('phone', '')
+            bio = request.POST.get('bio', '')
+            
+            user = request.user
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
+            user.save()
+            
+            profile = request.user.profile
+            profile.phone = phone
+            profile.bio = bio
+            profile.save()
+            
+            messages.success(request, 'Профиль успешно обновлен!')
+            return redirect('main:profile_settings')
+    
+    password_form = PasswordChangeForm(request.user)
+    profile = request.user.profile
+    
+    context = {
+        'title': 'Настройки профиля',
+        'password_form': password_form,
+        'profile': profile
+    }
+    return render(request, 'main/profile_settings.html', context)

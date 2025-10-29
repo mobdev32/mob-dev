@@ -72,10 +72,16 @@
                                         <span>Профиль</span>
                                     </a>
                                 </li>
+                                <li>
+                                    <a class="dropdown-item-modern" href="{% url 'main:profile_settings' %}">
+                                        <i class="fas fa-cog"></i>
+                                        <span>Настройки</span>
+                                    </a>
+                                </li>
                                 {% if user.is_staff %}
                                     <li>
                                         <a class="dropdown-item-modern" href="{% url 'admin:index' %}">
-                                            <i class="fas fa-cog"></i>
+                                            <i class="fas fa-tools"></i>
                                             <span>Админ панель</span>
                                         </a>
                                     </li>
