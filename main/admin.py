@@ -84,8 +84,8 @@ class MaterialProgressAdmin(admin.ModelAdmin):
 
 @admin.register(Feedback)
 class FeedbackAdmin(admin.ModelAdmin):
-    list_display = ['subject', 'name', 'email', 'status', 'priority', 'created_at']
-    list_filter = ['status', 'priority', 'created_at']
+    list_display = ['subject', 'name', 'email', 'status', 'created_at']
+    list_filter = ['status', 'created_at']
     search_fields = ['subject', 'name', 'email', 'message']
     readonly_fields = ['created_at', 'updated_at']
 

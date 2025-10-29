@@ -48,16 +48,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }, false);
     });
 
-    // Loading state for buttons
+    // Loading state for buttons - temporarily disabled for debugging
+    /*
     const submitButtons = document.querySelectorAll('button[type="submit"]');
     submitButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function(e) {
             if (this.form && this.form.checkValidity()) {
-                this.innerHTML = '<span class="loading"></span> Загрузка...';
+                const originalContent = this.innerHTML;
+                this.innerHTML = '<span class="loading"></span> Отправка...';
                 this.disabled = true;
+                
+                // Don't prevent default - let form submit naturally
+                // The form will handle the submission
             }
         });
     });
+    */
 
     // Test timer functionality
     const testTimer = document.getElementById('test-timer');

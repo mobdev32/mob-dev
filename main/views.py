@@ -41,12 +41,18 @@ def tests(request):
     }
     return render(request, 'main/tests.html', context)
 
-def contact(request):
+def contacts(request):
+    context = {
+        'title': 'Контакты',
+        'description': 'Свяжитесь с нами'
+    }
+    return render(request, 'main/contacts.html', context)
+
+def feedback(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
         subject = request.POST.get('subject')
-        priority = request.POST.get('priority', 'medium')
         message = request.POST.get('message')
         
         if name and email and subject and message:
@@ -54,20 +60,19 @@ def contact(request):
                 name=name,
                 email=email,
                 subject=subject,
-                priority=priority,
                 message=message,
                 user=request.user if request.user.is_authenticated else None
             )
             messages.success(request, 'Ваше сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.')
-            return redirect('main:contact')
+            return redirect('main:feedback')
         else:
             messages.error(request, 'Пожалуйста, заполните все обязательные поля.')
     
     context = {
-        'title': 'Контакты',
-        'description': 'Свяжитесь с нами'
+        'title': 'Обратная связь',
+        'description': 'Оставьте отзыв или задайте вопрос'
     }
-    return render(request, 'main/contact.html', context)
+    return render(request, 'main/feedback.html', context)
 
 def login_view(request):
     if request.method == 'POST':

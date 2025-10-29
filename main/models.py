@@ -189,20 +189,12 @@ class Feedback(models.Model):
         ('closed', 'Закрыто'),
     ]
     
-    PRIORITY_CHOICES = [
-        ('low', 'Низкий'),
-        ('medium', 'Средний'),
-        ('high', 'Высокий'),
-        ('urgent', 'Срочный'),
-    ]
-    
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100)
     email = models.EmailField()
     subject = models.CharField(max_length=200)
     message = models.TextField()
     status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='new')
-    priority = models.CharField(max_length=8, choices=PRIORITY_CHOICES, default='medium')
     admin_response = models.TextField(blank=True)
     responded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='feedback_responses')
     created_at = models.DateTimeField(auto_now_add=True)
