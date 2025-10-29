@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Результат теста: {{ attempt.test.title }} - Электронный учебник по мобильной разработке{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'main:tests' %}">Тесты</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'main:test_detail' attempt.test.id %}">{{ attempt.test.title }}</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Результат</li>
+                        </ol>
+                    </nav>
+                    
+                    <div class="mb-4">
+                        {% if attempt.is_passed %}
+                            <i class="fas fa-trophy fa-5x text-success mb-3"></i>
+                            <h2 class="text-success">Поздравляем!</h2>
+                            <h4 class="text-success">Тест пройден успешно!</h4>
+                        {% else %}
+                            <i class="fas fa-times-circle fa-5x text-danger mb-3"></i>
+                            <h2 class="text-danger">Тест не пройден</h2>
+                            <h4 class="text-danger">Попробуйте еще раз</h4>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">Результат</h5>
+                                    <div class="display-4 {% if attempt.is_passed %}text-success{% else %}text-danger{% endif %}">
+                                        {{ attempt.percentage|floatformat:1 }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">Баллы</h5>
+                                    <div class="display-4 text-primary">
+                                        {{ attempt.score }}/{{ attempt.max_score }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">Проходной балл</h5>
+                                    <div class="display-4 text-info">
+                                        {{ attempt.test.passing_score }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>Детальная информация</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Тест:</strong> {{ attempt.test.title }}</p>
+                                <p><strong>Категория:</strong> {{ attempt.test.category.name }}</p>
+                                <p><strong>Сложность:</strong> {{ attempt.test.get_difficulty_display }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Дата прохождения:</strong> {{ attempt.completed_at|date:"d.m.Y H:i" }}</p>
+                                <p><strong>Время прохождения:</strong> {{ attempt.time_spent }} минут</p>
+                                <p><strong>Статус:</strong> 
+                                    {% if attempt.is_passed %}
+                                        <span class="badge bg-success">Пройден</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Не пройден</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if attempt.percentage >= 90 %}
+                    <div class="alert alert-success">
+                        <h6><i class="fas fa-star me-2"></i>Отличный результат!</h6>
+                        <p class="mb-0">Вы показали превосходные знания по данной теме!</p>
+                    </div>
+                    {% elif attempt.percentage >= 80 %}
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-thumbs-up me-2"></i>Хороший результат!</h6>
+                        <p class="mb-0">Вы хорошо знаете материал, но есть куда расти!</p>
+                    </div>
+                    {% elif attempt.percentage >= 70 %}
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-check me-2"></i>Удовлетворительный результат</h6>
+                        <p class="mb-0">Тест пройден, но рекомендуется повторить материал.</p>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Требуется дополнительное изучение</h6>
+                        <p class="mb-0">Рекомендуется изучить материал еще раз и повторить тест.</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="{% url 'main:test_detail' attempt.test.id %}" class="btn btn-primary btn-lg me-md-2">
+                            <i class="fas fa-redo me-1"></i>Повторить тест
+                        </a>
+                        <a href="{% url 'main:tests' %}" class="btn btn-outline-primary btn-lg me-md-2">
+                            <i class="fas fa-list me-1"></i>Все тесты
+                        </a>
+                        <a href="{% url 'main:materials' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-book me-1"></i>Материалы
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

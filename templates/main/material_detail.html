@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ material.title }} - Электронный учебник по мобильной разработке{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'main:materials' %}">Материалы</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ material.title }}</li>
+                        </ol>
+                    </nav>
+                    
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h1 class="card-title mb-2">{{ material.title }}</h1>
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-primary me-2">{{ material.category.name }}</span>
+                                {% if material.difficulty == 'beginner' %}
+                                    <span class="badge bg-success me-2">Начальный</span>
+                                {% elif material.difficulty == 'intermediate' %}
+                                    <span class="badge bg-warning me-2">Средний</span>
+                                {% elif material.difficulty == 'advanced' %}
+                                    <span class="badge bg-danger me-2">Продвинутый</span>
+                                {% endif %}
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>{{ material.reading_time }} минут чтения
+                                </small>
+                            </div>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <div class="text-end">
+                            {% if progress %}
+                            <div class="mb-2">
+                                <small class="text-muted">Прогресс изучения</small>
+                                <div class="progress" style="width: 150px; height: 8px;">
+                                    <div class="progress-bar" style="width: {{ progress.progress_percentage }}%"></div>
+                                </div>
+                                <small class="text-muted">{{ progress.progress_percentage }}%</small>
+                            </div>
+                            {% endif %}
+                            <button class="btn btn-success btn-sm" onclick="markAsCompleted()">
+                                <i class="fas fa-check me-1"></i>Отметить как изученное
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if material.description %}
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>Описание</h6>
+                        <p class="mb-0">{{ material.description }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="material-content">
+                        <h3>Содержание материала</h3>
+                        <div class="content-text">
+                            {{ material.content|linebreaks }}
+                        </div>
+                    </div>
+                    
+                    {% if material.files.all %}
+                    <div class="mt-4">
+                        <h5><i class="fas fa-download me-2"></i>Дополнительные файлы</h5>
+                        <div class="list-group">
+                            {% for file in material.files.all %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-file me-2"></i>
+                                    <strong>{{ file.name }}</strong>
+                                </div>
+                                <a href="{{ file.file.url }}" class="btn btn-outline-primary btn-sm" download>
+                                    <i class="fas fa-download me-1"></i>Скачать
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="text-muted">
+                                    <i class="fas fa-user me-1"></i>Автор: {{ material.author.get_full_name|default:material.author.username }}
+                                </small>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <small class="text-muted">
+                                    <i class="fas fa-eye me-1"></i>{{ material.views_count }} просмотров
+                                </small>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>Создано: {{ material.created_at|date:"d.m.Y" }}
+                                </small>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <small class="text-muted">
+                                    <i class="fas fa-edit me-1"></i>Обновлено: {{ material.updated_at|date:"d.m.Y" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        Информация о материале
+                    </h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <strong>Категория:</strong><br>
+                            <span class="badge bg-primary">{{ material.category.name }}</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>Сложность:</strong><br>
+                            {% if material.difficulty == 'beginner' %}
+                                <span class="badge bg-success">Начальный</span>
+                            {% elif material.difficulty == 'intermediate' %}
+                                <span class="badge bg-warning">Средний</span>
+                            {% elif material.difficulty == 'advanced' %}
+                                <span class="badge bg-danger">Продвинутый</span>
+                            {% endif %}
+                        </li>
+                        <li class="mb-2">
+                            <strong>Время чтения:</strong><br>
+                            <i class="fas fa-clock me-1"></i>{{ material.reading_time }} минут
+                        </li>
+                        <li class="mb-2">
+                            <strong>Просмотры:</strong><br>
+                            <i class="fas fa-eye me-1"></i>{{ material.views_count }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-lightbulb me-2 text-primary"></i>
+                        Полезные советы
+                    </h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Читайте материал внимательно
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Делайте заметки по ходу изучения
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Практикуйтесь с примерами кода
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Пройдите тест после изучения
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+<script>
+function markAsCompleted() {
+    fetch('{% url "main:material_detail" material.id %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            'action': 'mark_completed'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+</script>
+{% endif %}
+{% endblock %}

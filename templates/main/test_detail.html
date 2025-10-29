@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ test.title }} - Электронный учебник по мобильной разработке{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'main:tests' %}">Тесты</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ test.title }}</li>
+                        </ol>
+                    </nav>
+                    
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h1 class="card-title mb-2">{{ test.title }}</h1>
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-primary me-2">{{ test.category.name }}</span>
+                                {% if test.difficulty == 'beginner' %}
+                                    <span class="badge bg-success me-2">Начальный</span>
+                                {% elif test.difficulty == 'intermediate' %}
+                                    <span class="badge bg-warning me-2">Средний</span>
+                                {% elif test.difficulty == 'advanced' %}
+                                    <span class="badge bg-danger me-2">Продвинутый</span>
+                                {% endif %}
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>{{ test.time_limit }} минут
+                                </small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="mb-2">
+                                <small class="text-muted">Время</small>
+                                <div id="timer" class="h5 text-primary">00:00</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if test.description %}
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>Описание теста</h6>
+                        <p class="mb-0">{{ test.description }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Важная информация</h6>
+                        <ul class="mb-0">
+                            <li>Время на прохождение: <strong>{{ test.time_limit }} минут</strong></li>
+                            <li>Количество вопросов: <strong>{{ questions.count }}</strong></li>
+                            <li>Проходной балл: <strong>{{ test.passing_score }}%</strong></li>
+                            <li>После отправки теста результат нельзя изменить</li>
+                        </ul>
+                    </div>
+                    
+                    <form method="post" id="testForm">
+                        {% csrf_token %}
+                        {% for question in questions %}
+                        <div class="question-block mb-4 p-3 border rounded">
+                            <h5 class="question-title">
+                                <span class="badge bg-secondary me-2">{{ forloop.counter }}</span>
+                                {{ question.question_text }}
+                                <small class="text-muted">({{ question.points }} балл{{ question.points|pluralize:"ов" }})</small>
+                            </h5>
+                            
+                            {% if question.question_type == 'single' %}
+                                <div class="answers">
+                                    {% for answer in question.answers.all %}
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="question_{{ question.id }}" 
+                                               id="answer_{{ answer.id }}" value="{{ answer.id }}">
+                                        <label class="form-check-label" for="answer_{{ answer.id }}">
+                                            {{ answer.answer_text }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% elif question.question_type == 'multiple' %}
+                                <div class="answers">
+                                    {% for answer in question.answers.all %}
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="question_{{ question.id }}" 
+                                               id="answer_{{ answer.id }}" value="{{ answer.id }}">
+                                        <label class="form-check-label" for="answer_{{ answer.id }}">
+                                            {{ answer.answer_text }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% elif question.question_type == 'text' %}
+                                <div class="answers">
+                                    <textarea class="form-control" name="question_{{ question.id }}" 
+                                              rows="3" placeholder="Введите ваш ответ..."></textarea>
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-outline-secondary me-md-2" onclick="clearForm()">
+                                <i class="fas fa-eraser me-1"></i>Очистить все
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg" onclick="return confirmSubmit()">
+                                <i class="fas fa-paper-plane me-1"></i>Завершить тест
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        Информация о тесте
+                    </h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <strong>Категория:</strong><br>
+                            <span class="badge bg-primary">{{ test.category.name }}</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>Сложность:</strong><br>
+                            {% if test.difficulty == 'beginner' %}
+                                <span class="badge bg-success">Начальный</span>
+                            {% elif test.difficulty == 'intermediate' %}
+                                <span class="badge bg-warning">Средний</span>
+                            {% elif test.difficulty == 'advanced' %}
+                                <span class="badge bg-danger">Продвинутый</span>
+                            {% endif %}
+                        </li>
+                        <li class="mb-2">
+                            <strong>Время:</strong><br>
+                            <i class="fas fa-clock me-1"></i>{{ test.time_limit }} минут
+                        </li>
+                        <li class="mb-2">
+                            <strong>Вопросов:</strong><br>
+                            <i class="fas fa-list me-1"></i>{{ questions.count }}
+                        </li>
+                        <li class="mb-2">
+                            <strong>Проходной балл:</strong><br>
+                            <i class="fas fa-trophy me-1"></i>{{ test.passing_score }}%
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-lightbulb me-2 text-primary"></i>
+                        Советы по прохождению
+                    </h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Внимательно читайте вопросы
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Следите за временем
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Не спешите с ответами
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Проверьте ответы перед отправкой
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let timeLeft = {{ test.time_limit }} * 60;
+let timerInterval;
+
+function updateTimer() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById('timer').textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        alert('Время вышло! Тест будет автоматически отправлен.');
+        document.getElementById('testForm').submit();
+    }
+    
+    timeLeft--;
+}
+
+function startTimer() {
+    timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
+}
+
+function clearForm() {
+    if (confirm('Вы уверены, что хотите очистить все ответы?')) {
+        document.getElementById('testForm').reset();
+    }
+}
+
+function confirmSubmit() {
+    const unansweredQuestions = document.querySelectorAll('.question-block').length;
+    const answeredQuestions = document.querySelectorAll('input:checked, textarea:not(:placeholder-shown)').length;
+    
+    if (answeredQuestions < unansweredQuestions) {
+        return confirm('Вы ответили не на все вопросы. Продолжить отправку теста?');
+    }
+    
+    return confirm('Вы уверены, что хотите завершить тест? После отправки результат нельзя изменить.');
+}
+
+window.onload = function() {
+    startTimer();
+};
+
+window.onbeforeunload = function() {
+    return 'Вы уверены, что хотите покинуть страницу? Прогресс теста будет потерян.';
+};
+</script>
+{% endblock %}

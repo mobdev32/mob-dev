@@ -68,7 +68,7 @@
                                 <small class="text-muted">
                                     <i class="fas fa-clock me-1"></i>{{ material.reading_time }} минут
                                 </small>
-                                <a href="#" class="btn btn-primary">Изучать</a>
+                                <a href="{% url 'main:material_detail' material.id %}" class="btn btn-primary">Изучать</a>
                             </div>
                         </div>
                     </div>

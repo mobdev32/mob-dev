@@ -103,7 +103,7 @@
                                 <small class="text-muted">
                                     <i class="fas fa-clock me-1"></i>{{ material.reading_time }} минут чтения
                                 </small>
-                                <span class="badge bg-primary">{{ material.get_difficulty_display }}</span>
+                                <a href="{% url 'main:material_detail' material.id %}" class="btn btn-primary btn-sm">Изучать</a>
                             </div>
                         </div>
                     </div>
