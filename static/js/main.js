@@ -1,19 +1,14 @@
-// Main JavaScript for Mobile Development Textbook
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // Initialize popovers
     var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
     var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
         return new bootstrap.Popover(popoverTriggerEl);
     });
 
-    // Auto-hide alerts after 5 seconds
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(function(alert) {
         setTimeout(function() {
@@ -22,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
 
-    // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -36,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Form validation enhancement
     const forms = document.querySelectorAll('.needs-validation');
     Array.from(forms).forEach(form => {
         form.addEventListener('submit', event => {
@@ -48,24 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, false);
     });
 
-    // Loading state for buttons - temporarily disabled for debugging
-    /*
-    const submitButtons = document.querySelectorAll('button[type="submit"]');
-    submitButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            if (this.form && this.form.checkValidity()) {
-                const originalContent = this.innerHTML;
-                this.innerHTML = '<span class="loading"></span> Отправка...';
-                this.disabled = true;
-                
-                // Don't prevent default - let form submit naturally
-                // The form will handle the submission
-            }
-        });
-    });
-    */
-
-    // Test timer functionality
     const testTimer = document.getElementById('test-timer');
     if (testTimer) {
         let timeLeft = parseInt(testTimer.dataset.timeLeft);
@@ -79,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearInterval(timerInterval);
                 testTimer.textContent = 'Время вышло!';
                 testTimer.classList.add('text-danger');
-                // Auto-submit form if exists
                 const testForm = document.querySelector('form[data-auto-submit]');
                 if (testForm) {
                     testForm.submit();
@@ -88,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1000);
     }
 
-    // Material search functionality
     const searchInput = document.getElementById('material-search');
     if (searchInput) {
         searchInput.addEventListener('input', function() {
@@ -108,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Progress tracking
     const progressBars = document.querySelectorAll('.progress-bar');
     progressBars.forEach(bar => {
         const targetWidth = bar.dataset.width || '0';
@@ -117,7 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     });
 
-    // Copy to clipboard functionality
     const copyButtons = document.querySelectorAll('[data-copy]');
     copyButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -134,8 +105,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
-// Utility functions
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;

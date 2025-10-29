@@ -46,22 +46,47 @@
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user me-1"></i>{{ user.get_full_name|default:user.username }}
+                            <a class="nav-link dropdown-toggle modern-user-dropdown" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-avatar-mini">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                                <i class="fas fa-chevron-down dropdown-arrow"></i>
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'main:profile' %}">
-                                    <i class="fas fa-user-circle me-1"></i>Профиль
-                                </a></li>
+                            <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="navbarDropdown">
+                                <li class="dropdown-header-user">
+                                    <div class="user-info-header">
+                                        <div class="user-avatar">
+                                            <i class="fas fa-user-circle"></i>
+                                        </div>
+                                        <div class="user-details">
+                                            <div class="user-name-full">{{ user.get_full_name|default:user.username }}</div>
+                                            <div class="user-email">{{ user.email }}</div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider-modern"></li>
+                                <li>
+                                    <a class="dropdown-item-modern" href="{% url 'main:profile' %}">
+                                        <i class="fas fa-user-circle"></i>
+                                        <span>Профиль</span>
+                                    </a>
+                                </li>
                                 {% if user.is_staff %}
-                                    <li><a class="dropdown-item" href="{% url 'admin:index' %}">
-                                        <i class="fas fa-cog me-1"></i>Админ панель
-                                    </a></li>
+                                    <li>
+                                        <a class="dropdown-item-modern" href="{% url 'admin:index' %}">
+                                            <i class="fas fa-cog"></i>
+                                            <span>Админ панель</span>
+                                        </a>
+                                    </li>
                                 {% endif %}
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'main:logout' %}">
-                                    <i class="fas fa-sign-out-alt me-1"></i>Выйти
-                                </a></li>
+                                <li><hr class="dropdown-divider-modern"></li>
+                                <li>
+                                    <a class="dropdown-item-modern dropdown-item-logout" href="{% url 'main:logout' %}">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span>Выйти</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     {% else %}
