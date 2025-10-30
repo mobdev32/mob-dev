@@ -614,3 +614,70 @@ def admin_test_create(request):
         'difficulties': Test.DIFFICULTY_CHOICES,
     }
     return render(request, 'main/admin/test_create.html', context)
+
+
+@login_required
+def admin_tests(request):
+    if not _require_admin(request.user):
+        messages.error(request, 'Доступ только для администраторов.')
+        return redirect('main:home')
+
+    status = request.GET.get('status', 'all')
+    query = request.GET.get('q', '').strip()
+    tests_qs = Test.objects.all().select_related('category', 'author')
+    if status == 'drafts':
+        tests_qs = tests_qs.filter(is_published=False)
+    elif status == 'published':
+        tests_qs = tests_qs.filter(is_published=True)
+    if query:
+        tests_qs = tests_qs.filter(Q(title__icontains=query) | Q(description__icontains=query))
+    tests_qs = tests_qs.order_by('-updated_at')
+
+    context = {
+        'title': 'Тесты',
+        'tests': tests_qs,
+        'status': status,
+        'query': query,
+    }
+    return render(request, 'main/admin/tests.html', context)
+
+
+@login_required
+def admin_test_edit(request, test_id):
+    if not _require_admin(request.user):
+        messages.error(request, 'Доступ только для администраторов.')
+        return redirect('main:home')
+
+    test = get_object_or_404(Test, id=test_id)
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        description = request.POST.get('description', '').strip()
+        category_id = request.POST.get('category')
+        difficulty = request.POST.get('difficulty', test.difficulty)
+        time_limit = int(request.POST.get('time_limit') or 0)
+        passing_score = int(request.POST.get('passing_score') or 70)
+        is_published = request.POST.get('is_published') == 'on'
+
+        if title and category_id:
+            category = get_object_or_404(Category, id=category_id)
+            test.title = title
+            test.description = description
+            test.category = category
+            test.difficulty = difficulty
+            test.time_limit = time_limit
+            test.passing_score = passing_score
+            test.is_published = is_published
+            test.save()
+            messages.success(request, 'Тест обновлен.')
+            if 'save_and_back' in request.POST:
+                return redirect('main:admin_tests')
+            return redirect('main:admin_test_edit', test_id=test.id)
+        messages.error(request, 'Заполните обязательные поля.')
+
+    context = {
+        'title': f'Редактировать тест: {test.title}',
+        'test': test,
+        'categories': Category.objects.all(),
+        'difficulties': Test.DIFFICULTY_CHOICES,
+    }
+    return render(request, 'main/admin/test_edit.html', context)

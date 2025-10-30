@@ -31,4 +31,6 @@ urlpatterns = [
     path('admin-panel/users/<int:user_id>/role/', views.admin_update_user_role, name='admin_update_user_role'),
     path('admin-panel/materials/new/', views.admin_material_create, name='admin_material_create'),
     path('admin-panel/tests/new/', views.admin_test_create, name='admin_test_create'),
+    path('admin-panel/tests/', views.admin_tests, name='admin_tests'),
+    path('admin-panel/tests/<int:test_id>/edit/', views.admin_test_edit, name='admin_test_edit'),
 ]
