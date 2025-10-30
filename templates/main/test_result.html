@@ -3,20 +3,19 @@
 
 {% block title %}Результат теста: {{ attempt.test.title }} - Электронный учебник по мобильной разработке{% endblock %}
 
+{% block breadcrumbs_items %}
+<li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+<li class="breadcrumb-item"><a href="{% url 'main:tests' %}">Тесты</a></li>
+<li class="breadcrumb-item"><a href="{% url 'main:test_detail' attempt.test.id %}">{{ attempt.test.title }}</a></li>
+<li class="breadcrumb-item active" aria-current="page">Результат</li>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4 px-3">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body text-center">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'main:tests' %}">Тесты</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'main:test_detail' attempt.test.id %}">{{ attempt.test.title }}</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Результат</li>
-                        </ol>
-                    </nav>
                     
                     <div class="mb-4">
                         {% if attempt.is_passed %}

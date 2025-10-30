@@ -153,6 +153,19 @@
         </div>
     </nav>
 
+    {% block breadcrumbs %}
+    {% if request.resolver_match and request.resolver_match.url_name != 'home' %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb container mt-2 mb-0 px-3">
+            {% block breadcrumbs_items %}
+            <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ title|default:"" }}</li>
+            {% endblock %}
+        </ol>
+    </nav>
+    {% endif %}
+    {% endblock %}
+
     {% if messages %}
         <div class="container mt-3">
             {% for message in messages %}

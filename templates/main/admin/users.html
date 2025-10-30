@@ -2,6 +2,12 @@
 
 {% block title %}Пользователи{% endblock %}
 
+{% block breadcrumbs_items %}
+<li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+<li class="breadcrumb-item"><a href="{% url 'main:admin_dashboard' %}">Админ панель</a></li>
+<li class="breadcrumb-item active" aria-current="page">Пользователи</li>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4 px-3">
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">

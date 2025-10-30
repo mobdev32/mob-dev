@@ -3,6 +3,12 @@
 
 {% block title %}Настройки профиля - Электронный учебник по мобильной разработке{% endblock %}
 
+{% block breadcrumbs_items %}
+<li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+<li class="breadcrumb-item"><a href="{% url 'main:profile' %}">Профиль</a></li>
+<li class="breadcrumb-item active" aria-current="page">Настройки</li>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4 px-3">
     <div class="row justify-content-center">

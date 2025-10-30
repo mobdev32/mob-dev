@@ -3,6 +3,11 @@
 
 {% block title %}{{ title }} - Электронный учебник по мобильной разработке{% endblock %}
 
+{% block breadcrumbs_items %}
+<li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+<li class="breadcrumb-item active" aria-current="page">Обратная связь</li>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4 px-3">
     <div class="row mb-4">

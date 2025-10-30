@@ -2,6 +2,11 @@
 
 {% block title %}{{ title }} - Электронный учебник по мобильной разработке{% endblock %}
 
+{% block breadcrumbs_items %}
+<li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+<li class="breadcrumb-item active" aria-current="page">Рекомендации</li>
+{% endblock %}
+
 {% block extra_css %}
 <style>
   .stack-hero { text-align:center; }
