@@ -700,6 +700,26 @@ def admin_test_create(request):
 
 
 @login_required
+def admin_feedbacks(request):
+    if not _require_admin(request.user):
+        messages.error(request, 'Доступ только для администраторов.')
+        return redirect('main:home')
+
+    status = request.GET.get('status', 'all')
+    qs = Feedback.objects.all().select_related('responded_by')
+    if status in {'new', 'in_progress', 'closed'}:
+        qs = qs.filter(status=status)
+    qs = qs.order_by('-created_at')
+
+    context = {
+        'title': 'Обращения',
+        'feedbacks': qs,
+        'status': status,
+    }
+    return render(request, 'main/admin/feedbacks.html', context)
+
+
+@login_required
 def admin_tests(request):
     if not _require_admin(request.user):
         messages.error(request, 'Доступ только для администраторов.')

@@ -37,4 +37,5 @@ urlpatterns = [
     path('admin-panel/tests/<int:test_id>/edit/', views.admin_test_edit, name='admin_test_edit'),
     path('admin-panel/tests/<int:test_id>/questions/', views.admin_test_questions, name='admin_test_questions'),
     path('admin-panel/tests/<int:test_id>/questions/<int:question_id>/edit/', views.admin_question_edit, name='admin_question_edit'),
+    path('admin-panel/feedbacks/', views.admin_feedbacks, name='admin_feedbacks'),
 ]
