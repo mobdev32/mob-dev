@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">Редактировать вопрос</h1>
+        <div class="d-flex gap-2">
+            <a href="{% url 'main:admin_test_questions' test.id %}" class="btn btn-outline-secondary">К вопросам</a>
+            <a href="{% url 'main:admin_test_edit' test.id %}" class="btn btn-outline-secondary">К тесту</a>
+        </div>
+    </div>
+
+    <form method="post" class="card shadow-sm border-0 mb-3">
+        {% csrf_token %}
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label">Текст вопроса</label>
+                <textarea class="form-control" name="question_text" rows="3" required>{{ question.question_text }}</textarea>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Тип</label>
+                    <select name="question_type" class="form-select">
+                        {% for val, lbl in question_types %}
+                            <option value="{{ val }}" {% if val == question.question_type %}selected{% endif %}>{{ lbl }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Баллы</label>
+                    <input class="form-control" type="number" name="points" min="1" value="{{ question.points }}" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Порядок</label>
+                    <input class="form-control" type="number" name="order" min="0" value="{{ question.order }}" />
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-white d-flex gap-2">
+            <button class="btn btn-primary" type="submit">Сохранить</button>
+            <button class="btn btn-outline-secondary" type="submit" name="save_and_back" value="1">Сохранить и вернуться</button>
+        </div>
+    </form>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white fw-semibold">Ответы</div>
+        <div class="card-body">
+            <form method="post" class="mb-3">
+                {% csrf_token %}
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-lg-6">
+                        <label class="form-label">Новый ответ</label>
+                        <input class="form-control" type="text" name="new_answer_text" placeholder="Текст ответа" />
+                    </div>
+                    <div class="col-6 col-lg-2">
+                        <label class="form-label">Порядок</label>
+                        <input class="form-control" type="number" name="new_answer_order" min="0" value="0" />
+                    </div>
+                    <div class="col-6 col-lg-2 form-check mt-4">
+                        <input class="form-check-input" type="checkbox" name="new_answer_is_correct" id="new_answer_is_correct">
+                        <label class="form-check-label" for="new_answer_is_correct">Верный</label>
+                    </div>
+                    <div class="col-12 col-lg-2">
+                        <button class="btn btn-outline-primary w-100" type="submit">Добавить ответ</button>
+                    </div>
+                </div>
+            </form>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Ответ</th>
+                                <th>Порядок</th>
+                                <th>Верный</th>
+                                <th class="text-end">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for a in answers %}
+                            <tr>
+                                <td>
+                                    <input class="form-control" type="text" name="answer_{{ a.id }}_text" value="{{ a.answer_text }}" />
+                                </td>
+                                <td style="max-width: 120px;">
+                                    <input class="form-control" type="number" name="answer_{{ a.id }}_order" value="{{ a.order }}" />
+                                </td>
+                                <td class="text-center" style="width: 120px;">
+                                    <input class="form-check-input" type="checkbox" name="answer_{{ a.id }}_is_correct" {% if a.is_correct %}checked{% endif %} />
+                                </td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-primary" type="submit">Сохранить изменения</button>
+                                    <button class="btn btn-sm btn-outline-danger" name="action" value="delete_answer" type="submit" formaction="" formmethod="post" onclick="this.form.answer_id.value='{{ a.id }}'">Удалить</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <input type="hidden" name="answer_id" value="">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

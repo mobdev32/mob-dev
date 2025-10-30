@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Вопросы теста{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h1 class="h4 mb-0">Вопросы: {{ test.title }}</h1>
+        <div class="d-flex gap-2">
+            <a href="{% url 'main:admin_test_edit' test.id %}" class="btn btn-outline-secondary">К тесту</a>
+            <a href="{% url 'main:admin_tests' %}" class="btn btn-outline-secondary">Список тестов</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body">
+            <form method="post" class="row g-2 align-items-end">
+                {% csrf_token %}
+                <div class="col-12 col-lg-5">
+                    <label class="form-label">Новый вопрос</label>
+                    <input class="form-control" type="text" name="question_text" placeholder="Текст вопроса" required />
+                </div>
+                <div class="col-6 col-lg-2">
+                    <label class="form-label">Тип</label>
+                    <select name="question_type" class="form-select">
+                        {% for val, lbl in question_types %}
+                        <option value="{{ val }}">{{ lbl }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-3 col-lg-2">
+                    <label class="form-label">Баллы</label>
+                    <input class="form-control" type="number" name="points" min="1" value="1" />
+                </div>
+                <div class="col-3 col-lg-1">
+                    <label class="form-label">Порядок</label>
+                    <input class="form-control" type="number" name="order" min="0" value="0" />
+                </div>
+                <div class="col-12 col-lg-2">
+                    <button class="btn btn-primary w-100" type="submit">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th style="width:55%">Вопрос</th>
+                    <th>Тип</th>
+                    <th>Баллы</th>
+                    <th>Порядок</th>
+                    <th class="text-end">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for q in questions %}
+                <tr>
+                    <td>{{ q.question_text|truncatechars:120 }}</td>
+                    <td>{{ q.get_question_type_display }}</td>
+                    <td>{{ q.points }}</td>
+                    <td>{{ q.order }}</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" href="{% url 'main:admin_question_edit' test.id q.id %}">Редактировать</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">Вопросов пока нет</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+

@@ -33,4 +33,6 @@ urlpatterns = [
     path('admin-panel/tests/new/', views.admin_test_create, name='admin_test_create'),
     path('admin-panel/tests/', views.admin_tests, name='admin_tests'),
     path('admin-panel/tests/<int:test_id>/edit/', views.admin_test_edit, name='admin_test_edit'),
+    path('admin-panel/tests/<int:test_id>/questions/', views.admin_test_questions, name='admin_test_questions'),
+    path('admin-panel/tests/<int:test_id>/questions/<int:question_id>/edit/', views.admin_question_edit, name='admin_question_edit'),
 ]

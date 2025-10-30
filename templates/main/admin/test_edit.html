@@ -8,6 +8,7 @@
         <h1 class="h4 mb-0">Редактировать тест</h1>
         <div class="d-flex gap-2">
             <a href="{% url 'main:admin_tests' %}" class="btn btn-outline-secondary">К списку</a>
+            <a href="{% url 'main:admin_test_questions' test.id %}" class="btn btn-outline-primary">Вопросы</a>
             <a href="{% url 'main:admin_dashboard' %}" class="btn btn-outline-secondary">Панель</a>
         </div>
     </div>

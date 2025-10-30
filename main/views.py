@@ -681,3 +681,101 @@ def admin_test_edit(request, test_id):
         'difficulties': Test.DIFFICULTY_CHOICES,
     }
     return render(request, 'main/admin/test_edit.html', context)
+
+
+@login_required
+def admin_test_questions(request, test_id):
+    if not _require_admin(request.user):
+        messages.error(request, 'Доступ только для администраторов.')
+        return redirect('main:home')
+
+    test = get_object_or_404(Test, id=test_id)
+    questions = Question.objects.filter(test=test).order_by('order', 'id')
+    if request.method == 'POST':
+        # Quick add a new question
+        q_text = (request.POST.get('question_text') or '').strip()
+        q_type = request.POST.get('question_type') or 'single'
+        q_points = int(request.POST.get('points') or 1)
+        q_order = int(request.POST.get('order') or 0)
+        if q_text:
+            Question.objects.create(test=test, question_text=q_text, question_type=q_type, points=q_points, order=q_order)
+            messages.success(request, 'Вопрос добавлен.')
+            return redirect('main:admin_test_questions', test_id=test.id)
+        messages.error(request, 'Текст вопроса обязателен.')
+
+    context = {
+        'title': f'Вопросы теста: {test.title}',
+        'test': test,
+        'questions': questions,
+        'question_types': Question.QUESTION_TYPES,
+    }
+    return render(request, 'main/admin/test_questions.html', context)
+
+
+@login_required
+def admin_question_edit(request, test_id, question_id):
+    if not _require_admin(request.user):
+        messages.error(request, 'Доступ только для администраторов.')
+        return redirect('main:home')
+
+    test = get_object_or_404(Test, id=test_id)
+    question = get_object_or_404(Question, id=question_id, test=test)
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'delete_answer':
+            ans_id = request.POST.get('answer_id')
+            if ans_id:
+                Answer.objects.filter(id=ans_id, question=question).delete()
+                messages.success(request, 'Ответ удален.')
+                return redirect('main:admin_question_edit', test_id=test.id, question_id=question.id)
+
+        # Update question fields
+        title_text = (request.POST.get('question_text') or '').strip()
+        q_type = request.POST.get('question_type') or question.question_type
+        points = int(request.POST.get('points') or question.points)
+        order = int(request.POST.get('order') or question.order)
+        if title_text:
+            question.question_text = title_text
+            question.question_type = q_type
+            question.points = points
+            question.order = order
+            question.save()
+        else:
+            messages.error(request, 'Текст вопроса обязателен.')
+
+        # Update existing answers
+        for ans in Answer.objects.filter(question=question):
+            text_key = f'answer_{ans.id}_text'
+            corr_key = f'answer_{ans.id}_is_correct'
+            order_key = f'answer_{ans.id}_order'
+            ans_text = (request.POST.get(text_key) or '').strip()
+            ans_is_correct = request.POST.get(corr_key) == 'on'
+            ans_order = int(request.POST.get(order_key) or ans.order)
+            if ans_text:
+                ans.answer_text = ans_text
+                ans.is_correct = ans_is_correct
+                ans.order = ans_order
+                ans.save()
+
+        # Add new answer if provided
+        new_text = (request.POST.get('new_answer_text') or '').strip()
+        new_correct = request.POST.get('new_answer_is_correct') == 'on'
+        new_order = int(request.POST.get('new_answer_order') or 0)
+        if new_text:
+            Answer.objects.create(question=question, answer_text=new_text, is_correct=new_correct, order=new_order)
+
+        messages.success(request, 'Вопрос сохранен.')
+        if 'save_and_back' in request.POST:
+            return redirect('main:admin_test_questions', test_id=test.id)
+        return redirect('main:admin_question_edit', test_id=test.id, question_id=question.id)
+
+    answers = Answer.objects.filter(question=question).order_by('order', 'id')
+    context = {
+        'title': f'Редактировать вопрос',
+        'test': test,
+        'question': question,
+        'answers': answers,
+        'question_types': Question.QUESTION_TYPES,
+    }
+    return render(request, 'main/admin/question_edit.html', context)
