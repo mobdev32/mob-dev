@@ -314,6 +314,20 @@ def _require_teacher(user):
     return role_value == 'teacher' or role_display == 'преподаватель'
 
 
+def _require_admin(user):
+    if not getattr(user, 'is_authenticated', False):
+        return False
+    # treat Django staff as admin for this panel
+    if getattr(user, 'is_staff', False):
+        return True
+    profile = getattr(user, 'profile', None)
+    if not profile:
+        return False
+    role_value = (getattr(profile, 'role', '') or '').strip().lower()
+    role_display = (getattr(profile, 'get_role_display', lambda: '')() or '').strip().lower()
+    return role_value == 'admin' or role_display == 'администратор'
+
+
 @login_required
 def teacher_feedback_list(request):
     if not _require_teacher(request.user):
@@ -459,3 +473,144 @@ def teacher_student_detail(request, user_id):
         'attempts': attempts,
     }
     return render(request, 'main/teacher/student_detail.html', context)
+
+# -------------------- Admin custom panel --------------------
+
+@login_required
+def admin_dashboard(request):
+    if not _require_admin(request.user):
+        messages.error(request, 'Доступ только для администраторов.')
+        return redirect('main:home')
+
+    total_users = User.objects.count()
+    total_students = User.objects.filter(profile__role='student').count()
+    total_teachers = User.objects.filter(profile__role='teacher').count()
+    total_materials = Material.objects.count()
+    total_tests = Test.objects.count()
+    new_feedbacks = Feedback.objects.filter(status='new').count()
+
+    context = {
+        'title': 'Админ панель',
+        'total_users': total_users,
+        'total_students': total_students,
+        'total_teachers': total_teachers,
+        'total_materials': total_materials,
+        'total_tests': total_tests,
+        'new_feedbacks': new_feedbacks,
+    }
+    return render(request, 'main/admin/dashboard.html', context)
+
+
+@login_required
+def admin_users(request):
+    if not _require_admin(request.user):
+        messages.error(request, 'Доступ только для администраторов.')
+        return redirect('main:home')
+
+    query = request.GET.get('q', '').strip()
+    users = User.objects.all().select_related('profile')
+    if query:
+        users = users.filter(
+            Q(username__icontains=query)
+            | Q(first_name__icontains=query)
+            | Q(last_name__icontains=query)
+            | Q(email__icontains=query)
+        )
+    users = users.order_by('username')
+    context = {
+        'title': 'Пользователи',
+        'users': users,
+        'query': query,
+    }
+    return render(request, 'main/admin/users.html', context)
+
+
+@login_required
+@require_POST
+def admin_update_user_role(request, user_id):
+    if not _require_admin(request.user):
+        return JsonResponse({'success': False, 'error': 'forbidden'}, status=403)
+    target = get_object_or_404(User, id=user_id)
+    new_role = (request.POST.get('role') or '').strip()
+    if new_role not in dict(Profile.ROLE_CHOICES):
+        messages.error(request, 'Неверная роль.')
+        return redirect('main:admin_users')
+    profile, _ = Profile.objects.get_or_create(user=target)
+    profile.role = new_role
+    profile.save()
+    messages.success(request, f'Роль пользователя {target.username} обновлена.')
+    return redirect('main:admin_users')
+
+
+@login_required
+def admin_material_create(request):
+    if not _require_admin(request.user):
+        messages.error(request, 'Доступ только для администраторов.')
+        return redirect('main:home')
+
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        content = request.POST.get('content', '').strip()
+        description = request.POST.get('description', '').strip()
+        category_id = request.POST.get('category')
+        difficulty = request.POST.get('difficulty', 'beginner')
+        is_published = request.POST.get('is_published') == 'on'
+        if title and content and category_id:
+            category = get_object_or_404(Category, id=category_id)
+            Material.objects.create(
+                title=title,
+                content=content,
+                description=description,
+                category=category,
+                author=request.user,
+                difficulty=difficulty,
+                is_published=is_published,
+            )
+            messages.success(request, 'Материал создан.')
+            return redirect('main:admin_dashboard')
+        messages.error(request, 'Заполните обязательные поля.')
+
+    context = {
+        'title': 'Новый материал',
+        'categories': Category.objects.all(),
+        'difficulties': Material.DIFFICULTY_CHOICES,
+    }
+    return render(request, 'main/admin/material_create.html', context)
+
+
+@login_required
+def admin_test_create(request):
+    if not _require_admin(request.user):
+        messages.error(request, 'Доступ только для администраторов.')
+        return redirect('main:home')
+
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        description = request.POST.get('description', '').strip()
+        category_id = request.POST.get('category')
+        difficulty = request.POST.get('difficulty', 'beginner')
+        time_limit = int(request.POST.get('time_limit') or 0)
+        passing_score = int(request.POST.get('passing_score') or 70)
+        is_published = request.POST.get('is_published') == 'on'
+        if title and category_id:
+            category = get_object_or_404(Category, id=category_id)
+            Test.objects.create(
+                title=title,
+                description=description,
+                category=category,
+                author=request.user,
+                difficulty=difficulty,
+                time_limit=time_limit,
+                passing_score=passing_score,
+                is_published=is_published,
+            )
+            messages.success(request, 'Тест создан.')
+            return redirect('main:admin_dashboard')
+        messages.error(request, 'Заполните обязательные поля.')
+
+    context = {
+        'title': 'Новый тест',
+        'categories': Category.objects.all(),
+        'difficulties': Test.DIFFICULTY_CHOICES,
+    }
+    return render(request, 'main/admin/test_create.html', context)

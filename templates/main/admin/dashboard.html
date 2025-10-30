@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Админ панель{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Админ панель</h1>
+        <div class="d-flex gap-2">
+            <a href="{% url 'main:admin_users' %}" class="btn btn-outline-secondary">Пользователи</a>
+            <a href="{% url 'main:admin_material_create' %}" class="btn btn-primary">Новый материал</a>
+            <a href="{% url 'main:admin_test_create' %}" class="btn btn-primary">Новый тест</a>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Пользователи</div>
+                    <div class="display-6">{{ total_users }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Студенты</div>
+                    <div class="display-6">{{ total_students }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Преподаватели</div>
+                    <div class="display-6">{{ total_teachers }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Новые обращения</div>
+                    <div class="display-6">{{ new_feedbacks }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Материалы</div>
+                    <div class="display-6">{{ total_materials }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Тесты</div>
+                    <div class="display-6">{{ total_tests }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

@@ -25,4 +25,10 @@ urlpatterns = [
     path('teacher/students/<int:user_id>/', views.teacher_student_detail, name='teacher_student_detail'),
     path('teacher/', views.teacher_home, name='teacher_home'),
     path('teacher', views.teacher_home),
+    # Admin custom panel
+    path('admin-panel/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin-panel/users/', views.admin_users, name='admin_users'),
+    path('admin-panel/users/<int:user_id>/role/', views.admin_update_user_role, name='admin_update_user_role'),
+    path('admin-panel/materials/new/', views.admin_material_create, name='admin_material_create'),
+    path('admin-panel/tests/new/', views.admin_test_create, name='admin_test_create'),
 ]
