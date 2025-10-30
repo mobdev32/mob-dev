@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout, authenticate, update_session_auth
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Material, Test, Feedback, Profile, Category, TestAttempt, UserAnswer, Question, Answer, MaterialProgress
+from .models import Material, Test, Feedback, Profile, Category, TestAttempt, UserAnswer, Question, Answer, MaterialProgress, MaterialFile
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -555,9 +555,10 @@ def admin_material_create(request):
         category_id = request.POST.get('category')
         difficulty = request.POST.get('difficulty', 'beginner')
         is_published = request.POST.get('is_published') == 'on'
+        upload = request.FILES.get('file')
         if title and content and category_id:
             category = get_object_or_404(Category, id=category_id)
-            Material.objects.create(
+            material = Material.objects.create(
                 title=title,
                 content=content,
                 description=description,
@@ -566,8 +567,11 @@ def admin_material_create(request):
                 difficulty=difficulty,
                 is_published=is_published,
             )
+            # Optional PDF upload
+            if upload:
+                MaterialFile.objects.create(material=material, file=upload, name=getattr(upload, 'name', 'Файл'))
             messages.success(request, 'Материал создан.')
-            return redirect('main:admin_dashboard')
+            return redirect('main:admin_material_edit', material.id)
         messages.error(request, 'Заполните обязательные поля.')
 
     context = {
@@ -576,6 +580,85 @@ def admin_material_create(request):
         'difficulties': Material.DIFFICULTY_CHOICES,
     }
     return render(request, 'main/admin/material_create.html', context)
+
+
+@login_required
+def admin_material_edit(request, material_id):
+    if not _require_admin(request.user):
+        messages.error(request, 'Доступ только для администраторов.')
+        return redirect('main:home')
+
+    material = get_object_or_404(Material, id=material_id)
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'delete_file':
+            file_id = request.POST.get('file_id')
+            if file_id:
+                MaterialFile.objects.filter(id=file_id, material=material).delete()
+                messages.success(request, 'Файл удален.')
+                return redirect('main:admin_material_edit', material_id=material.id)
+
+        # Update fields
+        title = request.POST.get('title', '').strip()
+        content = request.POST.get('content', '').strip()
+        description = request.POST.get('description', '').strip()
+        category_id = request.POST.get('category')
+        difficulty = request.POST.get('difficulty', material.difficulty)
+        is_published = request.POST.get('is_published') == 'on'
+        if title and content and category_id:
+            category = get_object_or_404(Category, id=category_id)
+            material.title = title
+            material.content = content
+            material.description = description
+            material.category = category
+            material.difficulty = difficulty
+            material.is_published = is_published
+            material.save()
+            # Handle upload
+            upload = request.FILES.get('file')
+            if upload:
+                MaterialFile.objects.create(material=material, file=upload, name=getattr(upload, 'name', 'Файл'))
+            messages.success(request, 'Материал обновлен.')
+            if 'save_and_back' in request.POST:
+                return redirect('main:admin_dashboard')
+            return redirect('main:admin_material_edit', material_id=material.id)
+        messages.error(request, 'Заполните обязательные поля.')
+
+    files = MaterialFile.objects.filter(material=material).order_by('-uploaded_at')
+    context = {
+        'title': f'Редактировать материал: {material.title}',
+        'material': material,
+        'categories': Category.objects.all(),
+        'difficulties': Material.DIFFICULTY_CHOICES,
+        'files': files,
+    }
+    return render(request, 'main/admin/material_edit.html', context)
+
+
+@login_required
+def admin_materials(request):
+    if not _require_admin(request.user):
+        messages.error(request, 'Доступ только для администраторов.')
+        return redirect('main:home')
+
+    status = request.GET.get('status', 'all')
+    query = request.GET.get('q', '').strip()
+    mats = Material.objects.all().select_related('category', 'author')
+    if status == 'drafts':
+        mats = mats.filter(is_published=False)
+    elif status == 'published':
+        mats = mats.filter(is_published=True)
+    if query:
+        mats = mats.filter(Q(title__icontains=query) | Q(description__icontains=query))
+    mats = mats.order_by('-updated_at')
+
+    context = {
+        'title': 'Материалы',
+        'materials': mats,
+        'status': status,
+        'query': query,
+    }
+    return render(request, 'main/admin/materials.html', context)
 
 
 @login_required

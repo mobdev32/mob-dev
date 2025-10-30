@@ -9,7 +9,7 @@
         <a href="{% url 'main:admin_dashboard' %}" class="btn btn-outline-secondary">Панель</a>
     </div>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-3">
             <label class="form-label">Заголовок</label>
@@ -43,6 +43,10 @@
         <div class="form-check form-switch mb-3">
             <input class="form-check-input" type="checkbox" role="switch" name="is_published" id="is_published">
             <label class="form-check-label" for="is_published">Опубликовать</label>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">PDF файл (необязательно)</label>
+            <input type="file" name="file" accept="application/pdf,.pdf" class="form-control">
         </div>
         <button class="btn btn-primary" type="submit">Создать</button>
     </form>
