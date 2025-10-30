@@ -322,13 +322,19 @@ def teacher_feedback_list(request):
 
     feedback_qs = Feedback.objects.all().select_related('user', 'responded_by')
 
-    status_filter = request.GET.get('status')
+    # Default: show only new feedbacks
+    status_filter = request.GET.get('status', 'new')
+    mine = request.GET.get('mine') == '1'
     if status_filter:
         feedback_qs = feedback_qs.filter(status=status_filter)
+    if mine:
+        feedback_qs = feedback_qs.filter(responded_by=request.user)
 
     context = {
         'title': 'Обращения студентов',
         'feedback_list': feedback_qs,
+        'status_filter': status_filter,
+        'mine': mine,
     }
     return render(request, 'main/teacher/feedback_list.html', context)
 
@@ -349,25 +355,57 @@ def teacher_feedback_update(request, feedback_id):
 
     feedback = get_object_or_404(Feedback, id=feedback_id)
 
-    new_status = request.POST.get('status')
+    action = request.POST.get('action')
     admin_response = request.POST.get('admin_response', '')
 
-    changed = False
-    if new_status and new_status in dict(Feedback.STATUS_CHOICES):
-        feedback.status = new_status
-        changed = True
-    if admin_response is not None:
-        feedback.admin_response = admin_response
-        changed = True
-
-    if changed:
+    if action == 'start':
+        feedback.status = 'in_progress'
         feedback.responded_by = request.user
         feedback.save()
+        messages.success(request, 'Обращение взято в работу.')
+    elif action == 'close':
+        if admin_response is not None:
+            feedback.admin_response = admin_response
+        feedback.status = 'closed'
+        if not feedback.responded_by:
+            feedback.responded_by = request.user
+        feedback.save()
+        messages.success(request, 'Обращение закрыто.')
+    else:
+        # Generic update (status/comment change)
+        new_status = request.POST.get('status')
+        changed = False
+        if admin_response is not None and admin_response != feedback.admin_response:
+            feedback.admin_response = admin_response
+            changed = True
+        if new_status in {'new', 'in_progress', 'closed'} and new_status != feedback.status:
+            feedback.status = new_status
+            changed = True
+        if changed:
+            if not feedback.responded_by:
+                feedback.responded_by = request.user
+            feedback.save()
+            messages.success(request, 'Обращение обновлено.')
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'success': True})
-    messages.success(request, 'Обращение обновлено.')
-    return redirect('main:teacher_feedback_list')
+    # Prefer redirecting to detail if provided
+    next_url = request.POST.get('next') or reverse('main:teacher_feedback_detail', args=[feedback.id])
+    return redirect(next_url)
+
+
+@login_required
+def teacher_feedback_detail(request, feedback_id):
+    if not _require_teacher(request.user):
+        messages.error(request, 'Доступ только для преподавателей.')
+        return redirect('main:home')
+
+    fb = get_object_or_404(Feedback.objects.select_related('user', 'responded_by'), id=feedback_id)
+    context = {
+        'title': f'Обращение: {fb.subject}',
+        'fb': fb,
+    }
+    return render(request, 'main/teacher/feedback_detail.html', context)
 
 
 @login_required

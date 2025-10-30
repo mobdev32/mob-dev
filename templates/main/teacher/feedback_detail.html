@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h1 class="h4 mb-0">Обращение</h1>
+        <div class="d-flex gap-2">
+            <a href="{% url 'main:teacher_feedback_list' %}" class="btn btn-outline-secondary">К списку</a>
+            <a href="{% url 'main:teacher_students' %}" class="btn btn-outline-secondary">Студенты</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="text-muted small">Тема</div>
+                    <div class="fw-semibold">{{ fb.subject }}</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="text-muted small">Статус</div>
+                    <div>
+                        {% if fb.status == 'new' %}
+                            <span class="badge text-bg-primary">Новое</span>
+                        {% elif fb.status == 'in_progress' %}
+                            <span class="badge text-bg-warning">В обработке</span>
+                        {% elif fb.status == 'closed' %}
+                            <span class="badge text-bg-secondary">Закрыто</span>
+                        {% else %}
+                            <span class="badge text-bg-light">{{ fb.status }}</span>
+                        {% endif %}
+                        {% if fb.responded_by %}
+                            <span class="ms-2 text-muted small">Назначено: {{ fb.responded_by.get_full_name|default:fb.responded_by.username }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="text-muted small">От</div>
+                    <div>{{ fb.name }} ({{ fb.email }})</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="text-muted small">Создано</div>
+                    <div>{{ fb.created_at|date:'d.m.Y H:i' }}</div>
+                </div>
+                <div class="col-12">
+                    <div class="text-muted small">Сообщение</div>
+                    <div class="border rounded p-3 bg-light">{{ fb.message|linebreaks }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <form method="post" action="{% url 'main:teacher_feedback_update' fb.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% url 'main:teacher_feedback_detail' fb.id %}">
+                <div class="mb-3">
+                    <label class="form-label">Комментарий</label>
+                    <textarea name="admin_response" class="form-control" rows="4" placeholder="Ваш комментарий...">{{ fb.admin_response }}</textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    {% if fb.status == 'new' %}
+                        <button name="action" value="start" class="btn btn-primary" type="submit">Взять в работу</button>
+                    {% endif %}
+                    {% if fb.status != 'closed' %}
+                        <button name="action" value="close" class="btn btn-success" type="submit">Закрыть</button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
