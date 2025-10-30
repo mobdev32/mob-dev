@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Электронный учебник по мобильной разработке{% endblock %}
+
+{% block extra_css %}
+<style>
+  .about-section .about-card { height: auto !important; min-height: 0 !important; }
+  .about-section .card { height: auto !important; min-height: 0 !important; max-height: 260px; overflow: hidden; }
+  /* Audience card should grow naturally */
+  .about-section .about-audience { max-height: none !important; overflow: visible !important; }
+  .about-section .card-body { padding: 1rem 1.25rem; overflow: hidden; }
+  .about-section .about-card .card-body p { margin-bottom: 0; }
+  .about-section { background: transparent; border-radius: 12px; }
+  .about-accent { display: none; }
+  .about-card.about-primary { border-left: 4px solid #0d6efd; }
+  .about-card.about-success { border-left: 4px solid #198754; }
+  .about-card.about-warning { border-left: 4px solid #ffc107; }
+  .about-icon { width: 36px; height: 36px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; }
+  .about-icon.primary { background: rgba(13,110,253,.12); color: #0b5ed7; }
+  .about-icon.success { background: rgba(25,135,84,.12); color: #198754; }
+  .about-icon.warning { background: rgba(255,193,7,.18); color: #b28900; }
+  .about-h-item { margin-bottom: .75rem; }
+  .about-h-item .h-title { font-weight: 600; }
+  .about-h-item .h-sub { color: #6c757d; margin: .2rem 0 0 0; }
+  .link-pill { display:inline-flex; align-items:center; gap:.4rem; padding:.4rem .65rem; border-radius:999px; text-decoration:none; transition:all .15s ease; }
+  .link-pill.email { background: rgba(13,110,253,.12); color:#0b5ed7; }
+  .link-pill.email:hover { background: rgba(13,110,253,.18); color:#0a58ca; text-decoration:none; }
+  .link-pill.feedback { background: rgba(255,193,7,.18); color:#b28900; }
+  .link-pill.feedback:hover { background: rgba(255,193,7,.24); color:#996f00; text-decoration:none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3 about-section">
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      <h1 class="mb-2">О нас</h1>
+      
+      <p class="text-muted">Учебная платформа по мобильной разработке, созданная для студентов и преподавателей</p>
+    </div>
+  </div>
+
+  <div class="row g-3 justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body p-4">
+          <div class="row g-3 align-items-center">
+            <div class="col-md-8">
+              <h5 class="mb-2">Наша миссия</h5>
+              <p class="mb-0">Делать качественное технологическое образование доступным: структурированные материалы, практические задания и тесты, единый прогресс и прозрачная обратная связь.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+              <div class="d-inline-block text-start">
+                <div class="text-muted small">Запущено</div>
+                <div class="fw-semibold">2025</div>
+                <div class="text-muted small mt-2">Поддержка</div>
+                <div class="fw-semibold">iOS / Android</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0 about-card about-primary">
+            <div class="card-body">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="about-icon primary"><i class="fas fa-layer-group"></i></span>
+                <h6 class="mb-0">Структурированные курсы</h6>
+              </div>
+              <p class="mb-0 text-muted">Материалы сгруппированы по уровням сложности и категориям, что помогает выстроить индивидуальную траекторию обучения.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0 about-card about-success">
+            <div class="card-body">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="about-icon success"><i class="fas fa-clipboard-check"></i></span>
+                <h6 class="mb-0">Практика и тесты</h6>
+              </div>
+              <p class="mb-0 text-muted">Вопросы с несколькими типами ответов и мгновенной проверкой знаний. Преподаватели видят результаты и прогресс.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0 about-card about-warning">
+            <div class="card-body">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="about-icon warning"><i class="fas fa-comments"></i></span>
+                <h6 class="mb-0">Обратная связь</h6>
+              </div>
+              <p class="mb-0 text-muted">Удобные формы для вопросов и предложений. Преподаватели берут обращения в работу, оставляют комментарии и закрывают их.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0 mt-3 about-audience">
+        <div class="card-body p-4">
+          <h5 class="mb-3">Для кого платформа</h5>
+          <div class="about-h-item">
+            <div class="h-title">Студенты</div>
+            <div class="h-sub">Получение материалов, прохождение тестов, отслеживание собственного прогресса.</div>
+          </div>
+          <div class="about-h-item">
+            <div class="h-title">Преподаватели</div>
+            <div class="h-sub">Управление обращениями, мониторинг прогресса студентов, анализ результатов тестов.</div>
+          </div>
+          
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0 mt-3">
+        <div class="card-body p-4">
+          <h5 class="mb-3">Контакты</h5>
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <a class="link-pill email" href="mailto:info@witte-university.ru"><i class="fas fa-envelope"></i><span>info@witte-university.ru</span></a>
+            <a class="link-pill feedback" href="{% url 'main:feedback' %}"><i class="fas fa-paper-plane"></i><span>Обратная связь</span></a>
+          </div>
+          <div class="text-muted mb-0">Частное образовательное учреждение высшего образования «Московский университет имени С.Ю. Витте».</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

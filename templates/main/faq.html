@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Электронный учебник по мобильной разработке{% endblock %}
+
+{% block extra_css %}
+<style>
+  .faq-hero { text-align:center; }
+  .faq-hero h1 { margin-bottom:.25rem; }
+  .faq-hero .subtitle { color:#6c757d; }
+  .faq-accordion .accordion-button { font-weight:600; padding:1rem 1.1rem; background:#fff; gap:.6rem; }
+  .faq-accordion .accordion-item { border:1px solid #eef1f4; border-radius:.75rem; overflow:hidden; background:#fff; transition:border-color .15s ease, box-shadow .15s ease; }
+  .faq-accordion .accordion-item + .accordion-item { margin-top:.5rem; }
+  .faq-accordion .accordion-button:not(.collapsed) { background:linear-gradient(180deg,#f9fbfe, #f8fafc); color:#0b5ed7; box-shadow: inset 0 -1px 0 rgba(0,0,0,.03); }
+  .faq-accordion .accordion-body { background:#fff; padding:1rem; color:#495057; }
+  .faq-accordion .accordion-button:focus { box-shadow:none; }
+  .faq-category { font-weight:800; font-size:1.35rem; color:#343a40; letter-spacing:.01em; margin:1.25rem 0 .75rem 0; padding-left:.6rem; border-left:4px solid #e9ecef; }
+  .faq-links a { text-decoration:none; }
+  .faq-links a:hover { text-decoration:underline; }
+  .faq-accordion .accordion-item:hover { border-color:#e3e7ed; box-shadow:0 6px 18px rgba(0,0,0,.05); }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+  <div class="row mb-4">
+    <div class="col-12 faq-hero">
+      <h1>FAQ</h1>
+      <div class="subtitle">Часто задаваемые вопросы</div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <div class="d-flex justify-content-end gap-2 mb-2">
+        <button class="btn btn-sm btn-outline-secondary" id="expandAll">Раскрыть все</button>
+        <button class="btn btn-sm btn-outline-secondary" id="collapseAll">Свернуть все</button>
+      </div>
+      <div class="faq-category">Аккаунт и доступ</div>
+      <div class="accordion faq-accordion" id="faqAccount">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="q2">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a2" aria-expanded="false" aria-controls="a2">
+              Забыли пароль — как восстановить доступ?
+            </button>
+          </h2>
+          <div id="a2" class="accordion-collapse collapse" aria-labelledby="q2" data-bs-parent="#faqAccount">
+            <div class="accordion-body">
+              Используйте функционал смены пароля в профиле или свяжитесь с администратором через страницу «Обратная связь», указав ваш логин и email.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-category">Материалы и тесты</div>
+      <div class="accordion faq-accordion" id="faqContent">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="q3">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a3" aria-expanded="false" aria-controls="a3">
+              Как получить доступ к материалам и тестам?
+            </button>
+          </h2>
+          <div id="a3" class="accordion-collapse collapse" aria-labelledby="q3" data-bs-parent="#faqContent">
+            <div class="accordion-body">
+              Откройте разделы «Материалы» и «Тесты». Отображаются только опубликованные элементы. Прогресс чтения и результаты тестов сохраняются автоматически.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="q4">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a4" aria-expanded="false" aria-controls="a4">
+              Как понять, что материал изучен?
+            </button>
+          </h2>
+          <div id="a4" class="accordion-collapse collapse" aria-labelledby="q4" data-bs-parent="#faqContent">
+            <div class="accordion-body">
+              На странице материала нажмите «Отметить как изученный». В профиле появится прогресс по материалам.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="q5">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a5" aria-expanded="false" aria-controls="#a5">
+              Можно ли пересдавать тесты?
+            </button>
+          </h2>
+          <div id="a5" class="accordion-collapse collapse" aria-labelledby="q5" data-bs-parent="#faqContent">
+            <div class="accordion-body">
+              Повторные попытки зависят от настроек курса. Результаты всех попыток сохраняются и видны преподавателю.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-category">Поддержка</div>
+      <div class="accordion faq-accordion" id="faqSupport">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="q6">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a6" aria-expanded="false" aria-controls="a6">
+              Как связаться с поддержкой?
+            </button>
+          </h2>
+          <div id="a6" class="accordion-collapse collapse" aria-labelledby="q6" data-bs-parent="#faqSupport">
+            <div class="accordion-body">
+              Используйте страницу «Обратная связь», опишите вопрос и укажите email. Мы постараемся ответить в течение 24 часов.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="q7">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a7" aria-expanded="false" aria-controls="a7">
+              Можно ли предложить улучшения для платформы?
+            </button>
+          </h2>
+          <div id="a7" class="accordion-collapse collapse" aria-labelledby="q7" data-bs-parent="#faqSupport">
+            <div class="accordion-body">
+              Да. На странице «Обратная связь» выберите тему «Предложение по улучшению» и опишите вашу идею.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3 faq-links">
+        Остались вопросы? Посетите раздел <a href="{% url 'main:feedback' %}">Обратная связь</a>.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const expandAll = document.getElementById('expandAll');
+  const collapseAll = document.getElementById('collapseAll');
+  if (expandAll) {
+    expandAll.addEventListener('click', function() {
+      document.querySelectorAll('.accordion .accordion-collapse').forEach(function(el){
+        const bsCollapse = bootstrap.Collapse.getOrCreateInstance(el, {toggle:false});
+        bsCollapse.show();
+      });
+    });
+  }
+  if (collapseAll) {
+    collapseAll.addEventListener('click', function() {
+      document.querySelectorAll('.accordion .accordion-collapse.show').forEach(function(el){
+        const bsCollapse = bootstrap.Collapse.getOrCreateInstance(el, {toggle:false});
+        bsCollapse.hide();
+      });
+    });
+  }
+});
+</script>
+{% endblock %}
+
+

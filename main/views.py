@@ -51,6 +51,27 @@ def contacts(request):
     }
     return render(request, 'main/contacts.html', context)
 
+def about(request):
+    context = {
+        'title': 'О нас',
+        'description': 'Информация о проекте и команде',
+    }
+    return render(request, 'main/about.html', context)
+
+def faq(request):
+    context = {
+        'title': 'F.A.Q.',
+        'description': 'Часто задаваемые вопросы',
+    }
+    return render(request, 'main/faq.html', context)
+
+def stack(request):
+    context = {
+        'title': 'Стек технологий',
+        'description': 'Рекомендации по инструментам и окружению для мобильной разработки',
+    }
+    return render(request, 'main/stack.html', context)
+
 def feedback(request):
     if request.method == 'POST':
         name = request.POST.get('name')

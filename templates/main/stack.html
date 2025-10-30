@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Электронный учебник по мобильной разработке{% endblock %}
+
+{% block extra_css %}
+<style>
+  .stack-hero { text-align:center; }
+  .stack-hero h1 { margin-bottom:.25rem; }
+  .stack-hero .subtitle { color:#6c757d; }
+  .stack-card { border:1px solid #f4e5a6; border-radius:.75rem; box-shadow:0 6px 18px rgba(0,0,0,.05); overflow:hidden; }
+  .stack-card .card-header { background:#fff8e1; color:#b28900; font-weight:700; border-bottom:1px solid #ffe08a; font-size:1.05rem; }
+  .stack-list { margin:0; padding-left: 1rem; }
+  .stack-list li + li { margin-top:.25rem; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 px-3">
+  <div class="row mb-4">
+    <div class="col-12 stack-hero">
+      <h1>Стек технологий</h1>
+      <div class="subtitle">Рекомендации по инструментам и окружению для мобильной разработки</div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="card stack-card h-100">
+        <div class="card-header">IDE и редакторы</div>
+        <div class="card-body">
+          <ul class="stack-list">
+            <li><strong>Android Studio</strong> — полный набор инструментов для Android (Gradle, AVD, Profiler).</li>
+            <li><strong>Xcode</strong> (macOS) — разработка под iOS, симуляторы, инструменты профилирования.</li>
+            <li><strong>VS Code</strong> — быстрый редактор для Flutter/React Native с богатыми расширениями.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card stack-card h-100">
+        <div class="card-header">SDK и фреймворки</div>
+        <div class="card-body">
+          <ul class="stack-list">
+            <li><strong>Kotlin/Jetpack</strong> — современная Android‑разработка.</li>
+            <li><strong>SwiftUI</strong> — декларативные интерфейсы для iOS.</li>
+            <li><strong>Flutter</strong> — кроссплатформенная разработка (Android/iOS).</li>
+            <li><strong>React Native</strong> — кроссплатформенная разработка на JS/TS.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card stack-card h-100">
+        <div class="card-header">Отладка и тестирование</div>
+        <div class="card-body">
+          <ul class="stack-list">
+            <li><strong>ADB</strong> и эмуляторы — лог‑кэт, инсталляция APK/Bundle.</li>
+            <li><strong>JUnit/Mockito</strong> (Android), <strong>XCTest</strong> (iOS) — модульные тесты.</li>
+            <li><strong>Espresso</strong>/<strong>UIAutomator</strong>, <strong>XCUITest</strong> — UI‑тесты.</li>
+            <li><strong>Charles/Proxyman</strong> — перехват и анализ HTTP(S).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card stack-card h-100">
+        <div class="card-header">CI/CD и публикация</div>
+        <div class="card-body">
+          <ul class="stack-list">
+            <li><strong>GitHub Actions</strong> / <strong>GitLab CI</strong> — сборки, тесты, линт.</li>
+            <li><strong>Fastlane</strong> — автоматизация подписей, скриншотов, публикаций.</li>
+            <li><strong>Play Console</strong> / <strong>App Store Connect</strong> — релизы и тестирование (Internal/TestFlight).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="card stack-card">
+        <div class="card-header">Настройка окружения</div>
+        <div class="card-body">
+          <ul class="stack-list">
+            <li><span class="mono">JDK 17+</span> для Android Studio; <span class="mono">CocoaPods</span> для iOS.</li>
+            <li><strong>Node.js LTS</strong> и <strong>nvm</strong> для React Native; <strong>Flutter SDK</strong> с <span class="mono">flutter doctor</span>.</li>
+            <li><strong>Recommended linters</strong>: <span class="mono">ktlint</span>, SwiftLint, ESLint/Prettier.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

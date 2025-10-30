@@ -17,6 +17,12 @@
     <link rel="apple-touch-icon" href="{% static 'images/favicon.svg' %}">
     
     {% block extra_css %}{% endblock %}
+    <style>
+        /* Hover dropdown for About only - keep open when hovering menu */
+        .info-dropdown .dropdown-menu { display: none; margin-top: 0; }
+        .info-dropdown:hover .dropdown-menu,
+        .info-dropdown:focus-within .dropdown-menu { display: block; }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-white">
@@ -40,6 +46,19 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:tests' %}">Тесты</a>
+                    </li>
+                    <li class="nav-item dropdown info-dropdown">
+                        <a class="nav-link dropdown-toggle" href="{% url 'main:about' %}" id="aboutDropdown" role="button">
+                            О нас
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="aboutDropdown">
+                            <li>
+                                <a class="dropdown-item-modern" href="{% url 'main:stack' %}">Рекомендации</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item-modern" href="{% url 'main:faq' %}">FAQ</a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:contacts' %}">Контакты</a>
