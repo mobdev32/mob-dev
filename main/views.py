@@ -7,6 +7,9 @@ from django.http import JsonResponse
 from .models import Material, Test, Feedback, Profile, Category, TestAttempt, UserAnswer, Question, Answer, MaterialProgress
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.views.decorators.http import require_POST
+from django.db.models import Prefetch, Q
+from django.urls import reverse
 
 def home(request):
     materials = Material.objects.filter(is_published=True)[:3]
@@ -294,3 +297,127 @@ def profile_settings(request):
         'profile': profile
     }
     return render(request, 'main/profile_settings.html', context)
+
+# -------------------- Teacher area --------------------
+
+def _require_teacher(user):
+    if not getattr(user, 'is_authenticated', False):
+        return False
+    # Allow staff as well to reduce lockout during setup
+    if getattr(user, 'is_staff', False):
+        return True
+    profile = getattr(user, 'profile', None)
+    if not profile:
+        return False
+    role_value = (getattr(profile, 'role', '') or '').strip().lower()
+    role_display = (getattr(profile, 'get_role_display', lambda: '')() or '').strip().lower()
+    return role_value == 'teacher' or role_display == 'преподаватель'
+
+
+@login_required
+def teacher_feedback_list(request):
+    if not _require_teacher(request.user):
+        messages.error(request, 'Доступ только для преподавателей.')
+        return redirect('main:home')
+
+    feedback_qs = Feedback.objects.all().select_related('user', 'responded_by')
+
+    status_filter = request.GET.get('status')
+    if status_filter:
+        feedback_qs = feedback_qs.filter(status=status_filter)
+
+    context = {
+        'title': 'Обращения студентов',
+        'feedback_list': feedback_qs,
+    }
+    return render(request, 'main/teacher/feedback_list.html', context)
+
+
+@login_required
+def teacher_home(request):
+    if not _require_teacher(request.user):
+        messages.error(request, 'Доступ только для преподавателей.')
+        return redirect('main:home')
+    return redirect('main:teacher_feedback_list')
+
+
+@login_required
+@require_POST
+def teacher_feedback_update(request, feedback_id):
+    if not _require_teacher(request.user):
+        return JsonResponse({'success': False, 'error': 'forbidden'}, status=403)
+
+    feedback = get_object_or_404(Feedback, id=feedback_id)
+
+    new_status = request.POST.get('status')
+    admin_response = request.POST.get('admin_response', '')
+
+    changed = False
+    if new_status and new_status in dict(Feedback.STATUS_CHOICES):
+        feedback.status = new_status
+        changed = True
+    if admin_response is not None:
+        feedback.admin_response = admin_response
+        changed = True
+
+    if changed:
+        feedback.responded_by = request.user
+        feedback.save()
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'success': True})
+    messages.success(request, 'Обращение обновлено.')
+    return redirect('main:teacher_feedback_list')
+
+
+@login_required
+def teacher_students(request):
+    if not _require_teacher(request.user):
+        messages.error(request, 'Доступ только для преподавателей.')
+        return redirect('main:home')
+
+    query = request.GET.get('q', '').strip()
+    students = User.objects.filter(profile__role='student')
+    if query:
+        students = students.filter(
+            Q(username__icontains=query)
+            | Q(first_name__icontains=query)
+            | Q(last_name__icontains=query)
+            | Q(email__icontains=query)
+        )
+    students = students.order_by('username')
+    context = {
+        'title': 'Студенты',
+        'students': students,
+        'query': query,
+    }
+    return render(request, 'main/teacher/students.html', context)
+
+
+@login_required
+def teacher_student_detail(request, user_id):
+    if not _require_teacher(request.user):
+        messages.error(request, 'Доступ только для преподавателей.')
+        return redirect('main:home')
+
+    student = get_object_or_404(User, id=user_id, profile__role='student')
+    materials_progress = (
+        MaterialProgress.objects
+        .filter(user=student)
+        .select_related('material')
+        .order_by('-last_read_at')
+    )
+    attempts = (
+        TestAttempt.objects
+        .filter(user=student)
+        .select_related('test')
+        .order_by('-started_at')
+    )
+
+    context = {
+        'title': f'Студент: {student.get_username()}',
+        'student': student,
+        'materials_progress': materials_progress,
+        'attempts': attempts,
+    }
+    return render(request, 'main/teacher/student_detail.html', context)

@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -83,6 +84,22 @@
                                         <span>Настройки</span>
                                     </a>
                                 </li>
+                                {% if user|is_teacher or user.is_staff %}
+                                    <li><hr class="dropdown-divider-modern"></li>
+                                    <li class="dropdown-header-user"><div class="small text-muted px-3">Зона преподавателя</div></li>
+                                    <li>
+                                        <a class="dropdown-item-modern" href="{% url 'main:teacher_feedback_list' %}">
+                                            <i class="fas fa-inbox"></i>
+                                            <span>Обращения</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item-modern" href="{% url 'main:teacher_students' %}">
+                                            <i class="fas fa-user-graduate"></i>
+                                            <span>Студенты</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
                                 {% if user.is_staff %}
                                     <li>
                                         <a class="dropdown-item-modern" href="{% url 'admin:index' %}">

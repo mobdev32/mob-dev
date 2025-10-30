@@ -17,4 +17,11 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile, name='profile'),
     path('profile/settings/', views.profile_settings, name='profile_settings'),
+    # Teacher area
+    path('teacher/feedbacks/', views.teacher_feedback_list, name='teacher_feedback_list'),
+    path('teacher/feedbacks/<int:feedback_id>/update/', views.teacher_feedback_update, name='teacher_feedback_update'),
+    path('teacher/students/', views.teacher_students, name='teacher_students'),
+    path('teacher/students/<int:user_id>/', views.teacher_student_detail, name='teacher_student_detail'),
+    path('teacher/', views.teacher_home, name='teacher_home'),
+    path('teacher', views.teacher_home),
 ]

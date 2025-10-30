@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}Профиль - Электронный учебник по мобильной разработке{% endblock %}
 
@@ -21,7 +22,7 @@
                 <div class="profile-stats">
                     <div class="stat-item">
                         <div class="stat-icon">
-                            <i class="fas fa-calendar-alt"></i>
+                            <i class="fas fa-calendar-alt text-white"></i>
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Дата регистрации</div>
@@ -30,7 +31,7 @@
                     </div>
                     <div class="stat-item">
                         <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
+                            <i class="fas fa-clock text-white"></i>
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Последний вход</div>
@@ -109,6 +110,26 @@
                     </div>
                 </div>
             </div>
+
+{% if user|is_teacher or user.is_staff %}
+            <div class="progress-section mt-4">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        Зона преподавателя
+                    </h2>
+                    <p class="section-subtitle">Быстрый доступ к инструментам преподавателя</p>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-primary" href="{% url 'main:teacher_feedback_list' %}">
+                        <i class="fas fa-inbox me-1"></i> Обращения
+                    </a>
+                    <a class="btn btn-outline-primary" href="{% url 'main:teacher_students' %}">
+                        <i class="fas fa-user-graduate me-1"></i> Студенты
+                    </a>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
