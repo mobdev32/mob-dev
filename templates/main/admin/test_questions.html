@@ -21,6 +21,7 @@
 
     <div class="card shadow-sm border-0 mb-3">
         <div class="card-body">
+            <h5 class="card-title mb-3">Добавить вопрос</h5>
             <form method="post" class="row g-2 align-items-end">
                 {% csrf_token %}
                 <div class="col-12 col-lg-5">
@@ -46,6 +47,24 @@
                 <div class="col-12 col-lg-2">
                     <button class="btn btn-primary w-100" type="submit">Добавить</button>
                 </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Массовая загрузка вопросов</h5>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Файл (CSV или JSON)</label>
+                    <input class="form-control" type="file" name="batch_file" accept=".csv,.json" required />
+                    <div class="form-text">
+                        <strong>Формат CSV:</strong> Заголовки: question_text, question_type, points, order, answer_1, answer_1_correct, answer_2, answer_2_correct, ...<br>
+                        <strong>Формат JSON:</strong> Массив объектов: [{"question_text": "...", "question_type": "single", "points": 1, "order": 1, "answers": [{"text": "...", "is_correct": true}, ...]}, ...]
+                    </div>
+                </div>
+                <button class="btn btn-success" type="submit">Загрузить вопросы</button>
             </form>
         </div>
     </div>

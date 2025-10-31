@@ -8,8 +8,11 @@ from .models import Material, Test, Feedback, Profile, Category, TestAttempt, Us
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch, Q, Max
 from django.urls import reverse
+import csv
+import json
+import io
 
 def home(request):
     materials = Material.objects.filter(is_published=True)[:3]
@@ -816,7 +819,138 @@ def admin_test_questions(request, test_id):
     test = get_object_or_404(Test, id=test_id)
     questions = Question.objects.filter(test=test).order_by('order', 'id')
     if request.method == 'POST':
-        # Quick add a new question
+        # Check for batch upload
+        batch_file = request.FILES.get('batch_file')
+        if batch_file:
+            try:
+                file_content = batch_file.read().decode('utf-8')
+                file_name = batch_file.name.lower()
+                
+                if file_name.endswith('.json'):
+                    # Parse JSON
+                    data = json.loads(file_content)
+                    created_count = 0
+                    errors = []
+                    
+                    if isinstance(data, list):
+                        for i, item in enumerate(data):
+                            try:
+                                q_text = item.get('question_text') or item.get('text', '').strip()
+                                q_type = item.get('question_type') or item.get('type', 'single')
+                                q_points = int(item.get('points', 1))
+                                q_order = int(item.get('order', len(questions) + i + 1))
+                                answers_data = item.get('answers', [])
+                                
+                                if not q_text:
+                                    errors.append(f'Строка {i+1}: отсутствует текст вопроса')
+                                    continue
+                                
+                                question = Question.objects.create(
+                                    test=test,
+                                    question_text=q_text,
+                                    question_type=q_type,
+                                    points=q_points,
+                                    order=q_order
+                                )
+                                
+                                for j, answer_data in enumerate(answers_data):
+                                    if isinstance(answer_data, dict):
+                                        ans_text = answer_data.get('answer_text') or answer_data.get('text', '').strip()
+                                        is_correct = answer_data.get('is_correct', False)
+                                    else:
+                                        ans_text = str(answer_data).strip()
+                                        is_correct = False
+                                    
+                                    if ans_text:
+                                        Answer.objects.create(
+                                            question=question,
+                                            answer_text=ans_text,
+                                            is_correct=bool(is_correct),
+                                            order=j + 1
+                                        )
+                                
+                                created_count += 1
+                            except Exception as e:
+                                errors.append(f'Строка {i+1}: {str(e)}')
+                    
+                    if created_count > 0:
+                        messages.success(request, f'Успешно добавлено вопросов: {created_count}')
+                    if errors:
+                        messages.warning(request, f'Ошибки при обработке: {"; ".join(errors[:5])}')
+                    if created_count == 0 and not errors:
+                        messages.error(request, 'Не удалось обработать файл. Проверьте формат данных.')
+                
+                elif file_name.endswith('.csv'):
+                    # Parse CSV
+                    csv_file = io.StringIO(file_content)
+                    reader = csv.DictReader(csv_file)
+                    created_count = 0
+                    errors = []
+                    max_order = questions.aggregate(Max('order'))['order__max'] or 0
+                    
+                    for row_num, row in enumerate(reader, start=2):  # Start at 2 (row 1 is header)
+                        try:
+                            q_text = row.get('question_text', '').strip()
+                            if not q_text:
+                                errors.append(f'Строка {row_num}: отсутствует текст вопроса')
+                                continue
+                            
+                            q_type = row.get('question_type', 'single').strip()
+                            q_points = int(row.get('points', 1))
+                            q_order = int(row.get('order', max_order + row_num - 1))
+                            
+                            question = Question.objects.create(
+                                test=test,
+                                question_text=q_text,
+                                question_type=q_type,
+                                points=q_points,
+                                order=q_order
+                            )
+                            
+                            # Parse answers - look for answer_1, answer_1_correct, answer_2, etc.
+                            answer_num = 1
+                            while True:
+                                answer_key = f'answer_{answer_num}'
+                                correct_key = f'answer_{answer_num}_correct'
+                                
+                                if answer_key not in row or not row[answer_key].strip():
+                                    break
+                                
+                                ans_text = row[answer_key].strip()
+                                is_correct = row.get(correct_key, '').strip().lower() in ('true', '1', 'yes', 'да', '✓')
+                                
+                                Answer.objects.create(
+                                    question=question,
+                                    answer_text=ans_text,
+                                    is_correct=is_correct,
+                                    order=answer_num
+                                )
+                                
+                                answer_num += 1
+                            
+                            created_count += 1
+                        except Exception as e:
+                            errors.append(f'Строка {row_num}: {str(e)}')
+                    
+                    if created_count > 0:
+                        messages.success(request, f'Успешно добавлено вопросов: {created_count}')
+                    if errors:
+                        messages.warning(request, f'Ошибки при обработке: {"; ".join(errors[:5])}')
+                    if created_count == 0 and not errors:
+                        messages.error(request, 'Не удалось обработать файл. Проверьте формат данных.')
+                else:
+                    messages.error(request, 'Неподдерживаемый формат файла. Используйте CSV или JSON.')
+                
+            except UnicodeDecodeError:
+                messages.error(request, 'Ошибка кодировки файла. Используйте UTF-8.')
+            except json.JSONDecodeError as e:
+                messages.error(request, f'Ошибка парсинга JSON: {str(e)}')
+            except Exception as e:
+                messages.error(request, f'Ошибка при обработке файла: {str(e)}')
+            
+            return redirect('main:admin_test_questions', test_id=test.id)
+        
+        # Quick add a new question (existing functionality)
         q_text = (request.POST.get('question_text') or '').strip()
         q_type = request.POST.get('question_type') or 'single'
         q_points = int(request.POST.get('points') or 1)
