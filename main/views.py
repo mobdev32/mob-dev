@@ -777,6 +777,14 @@ def admin_test_edit(request, test_id):
 
     test = get_object_or_404(Test, id=test_id)
     if request.method == 'POST':
+        # Check for delete test action
+        action = request.POST.get('action')
+        if action == 'delete_test':
+            test_title = test.title
+            test.delete()
+            messages.success(request, f'Тест "{test_title}" удален.')
+            return redirect('main:admin_tests')
+        
         title = request.POST.get('title', '').strip()
         description = request.POST.get('description', '').strip()
         category_id = request.POST.get('category')
@@ -819,6 +827,16 @@ def admin_test_questions(request, test_id):
     test = get_object_or_404(Test, id=test_id)
     questions = Question.objects.filter(test=test).order_by('order', 'id')
     if request.method == 'POST':
+        # Check for delete question action
+        action = request.POST.get('action')
+        if action == 'delete_question':
+            question_id = request.POST.get('question_id')
+            if question_id:
+                question = get_object_or_404(Question, id=question_id, test=test)
+                question.delete()
+                messages.success(request, 'Вопрос удален.')
+                return redirect('main:admin_test_questions', test_id=test.id)
+        
         # Check for batch upload
         batch_file = request.FILES.get('batch_file')
         if batch_file:

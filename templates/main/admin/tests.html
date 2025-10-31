@@ -59,7 +59,14 @@
                         {% endif %}
                     </td>
                     <td class="text-end">
-                        <a class="btn btn-sm btn-outline-primary" href="{% url 'main:admin_test_edit' t.id %}">Редактировать</a>
+                        <div class="d-flex gap-1 justify-content-end">
+                            <a class="btn btn-sm btn-outline-primary" href="{% url 'main:admin_test_edit' t.id %}">Редактировать</a>
+                            <form method="post" action="{% url 'main:admin_test_edit' t.id %}" style="display: inline;" onsubmit="return confirm('Вы уверены, что хотите удалить тест \'{{ t.title }}\'? Это действие нельзя отменить. Все вопросы и результаты также будут удалены.');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_test" />
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Удалить</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 {% empty %}
